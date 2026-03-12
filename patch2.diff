@@ -1,0 +1,10 @@
+--- src/pages/Shop.jsx
++++ src/pages/Shop.jsx
+@@ -18,7 +18,6 @@
+
+ const Shop = () => {
+   const ref = useRef(null);
+-  const [searchParams] = useSearchParams();
+   const [selectedCat, setSelectedCat] = useState('All');
+   const [sort, setSort] = useState('newest');
+   const [priceMax, setPriceMax] = useState(300);

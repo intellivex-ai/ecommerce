@@ -1,0 +1,8 @@
+--- src/pages/Shop.jsx
++++ src/pages/Shop.jsx
+@@ -1,5 +1,4 @@
+ import { useRef, useEffect, useState, useMemo } from 'react';
+-import { useSearchParams } from 'react-router-dom';
+ import { Filter, ChevronDown, SlidersHorizontal, Grid, List, Search, X } from 'lucide-react';
+ import ProductGrid from '../components/ProductGrid';
+ import { useProducts } from '../hooks/useProducts';
