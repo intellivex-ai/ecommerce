@@ -3,7 +3,7 @@ import { supabase } from './supabaseClient';
 export const storageService = {
     // Upload Product Image
     async uploadProductImage(file, fileName) {
-        const { data, error } = await supabase.storage
+        const { error } = await supabase.storage
             .from('product-images')
             .upload(`products/${fileName}`, file, {
                 cacheControl: '3600',
@@ -22,9 +22,9 @@ export const storageService = {
     // Upload User Avatar
     async uploadAvatar(file, userId) {
         const fileExt = file.name.split('.').pop();
-        const fileName = `${userId}-${Math.random()}.${fileExt}`;
+        const fileName = `${userId}-${crypto.randomUUID()}.${fileExt}`;
 
-        const { data, error } = await supabase.storage
+        const { error } = await supabase.storage
             .from('avatars')
             .upload(`users/${userId}/${fileName}`, file, {
                 cacheControl: '3600',
