@@ -1,0 +1,4 @@
+## 2024-05-24 - [Cross-Site Scripting (XSS) in GSAP Animations]
+**Vulnerability:** The `toastFeedback` function in `src/animations/gsapAnimations.js` dynamically created HTML strings using template literals including user-provided `message` inputs and injected them directly into the DOM using `toast.innerHTML = ...`. This pattern allows executing arbitrary Javascript if the `message` input contains malicious script tags (DOM-based XSS).
+**Learning:** Even utility functions for animations and UI feedback must treat all inputs as potentially untrusted. Direct DOM injection via `innerHTML` is a dangerous pattern that should be avoided across the codebase.
+**Prevention:** Always use safe DOM manipulation methods such as `document.createElement` combined with setting the `textContent` property when dynamically rendering text. This ensures any HTML tags within the input are treated strictly as text and are not executed by the browser.
