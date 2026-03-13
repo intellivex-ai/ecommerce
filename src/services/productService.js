@@ -3,27 +3,15 @@ import { supabase } from './supabaseClient';
 export const productService = {
     // Fetch all products with their categories
     async fetchProducts(filters = {}) {
-        let query = supabase.from('products').select(`
-      *,
-      categories (
-        id,
-        name,
-        slug
-      )
-    `);
+        // ⚡ Bolt: Use PostgREST !inner join to filter by category slug in a single query,
+        // eliminating the N+1 database roundtrip.
+        let selectQuery = `*, categories${filters.categorySlug ? '!inner' : ''}(id, name, slug)`;
+
+        let query = supabase.from('products').select(selectQuery);
 
         // Basic filtering
         if (filters.categorySlug) {
-            // Find category first
-            const { data: category } = await supabase
-                .from('categories')
-                .select('id')
-                .eq('slug', filters.categorySlug)
-                .single();
-
-            if (category) {
-                query = query.eq('category_id', category.id);
-            }
+            query = query.eq('categories.slug', filters.categorySlug);
         }
 
         if (filters.search) {
