@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    .fixed { position: fixed; }
+    .bottom-10 { bottom: 2.5rem; }
+    .left-1\/2 { left: 50%; }
+    .-translate-x-1\/2 { transform: translateX(-50%); }
+    .z-\[100\] { z-index: 100; }
+    .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+    .rounded-2xl { border-radius: 1rem; }
+    .glass-dark { background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
+    .border-brand\/20 { border: 1px solid rgba(0,255,0,0.2); }
+    .shadow-premium { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); }
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .gap-3 { gap: 0.75rem; }
+    .w-5 { width: 1.25rem; }
+    .h-5 { height: 1.25rem; }
+    .rounded-full { border-radius: 9999px; }
+    .bg-brand { background-color: #00ff00; }
+    .text-white { color: #fff; }
+    .justify-center { justify-content: center; }
+    .text-\[10px\] { font-size: 10px; }
+    .font-black { font-weight: 900; }
+    .text-xs { font-size: 0.75rem; }
+    .font-bold { font-weight: 700; }
+    .uppercase { text-transform: uppercase; }
+    .tracking-widest { letter-spacing: 0.1em; }
+  </style>
+</head>
+<body>
+<button onclick="toastFeedback('Sentinel Alert: System Secure', 'success')">Show Toast</button>
+<script>
+  const toastFeedback = (message, type = 'success') => {
+    const toast = document.createElement('div');
+    toast.className = `fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-2xl glass-dark border-brand/20 shadow-premium pointer-events-none flex items-center gap-3`;
+
+    const icon = type === 'success' ? '✓' : '!';
+
+    const iconSpan = document.createElement('span');
+    iconSpan.className = 'w-5 h-5 rounded-full bg-brand text-white flex items-center justify-center text-[10px] font-black';
+    iconSpan.textContent = icon;
+
+    const msgSpan = document.createElement('span');
+    msgSpan.className = 'text-white text-xs font-bold uppercase tracking-widest';
+    msgSpan.textContent = message;
+
+    toast.appendChild(iconSpan);
+    toast.appendChild(msgSpan);
+
+    document.body.appendChild(toast);
+
+    gsap.fromTo(toast,
+      { y: 50, opacity: 0, scale: 0.9 },
+      { y: 0, opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(1.7)' }
+    );
+
+    gsap.to(toast, {
+      opacity: 0,
+      y: -20,
+      duration: 0.5,
+      delay: 2,
+      ease: 'power2.in',
+      onComplete: () => toast.remove()
+    });
+  };
+</script>
+</body>
+</html>
