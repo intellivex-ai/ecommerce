@@ -1,0 +1,3 @@
+## 2024-03-14 - Prevent N+1 queries when filtering by relations in Supabase
+**Learning:** In Supabase/PostgREST, filtering by a related table's fields (like a category slug for products) natively creates an N+1 or multiple query anti-pattern if done manually (e.g., fetching the category ID first, then the products).
+**Action:** Use the PostgREST `!inner` join syntax (`categories!inner(id, name, slug)`) inside the `.select()` statement to combine the filtering and fetching into a single efficient query. Always check if multiple `.from()` queries are being made to resolve related IDs, and replace them with an `!inner` join filter if possible.
