@@ -1,0 +1,4 @@
+## 2024-05-18 - Hardcoded API Keys in `.env` and `.env.example`
+**Vulnerability:** Actual Supabase and Firebase API keys and URLs were exposed in plain text in `.env` and `.env.example`. Furthermore, `.env` was committed to git and tracked.
+**Learning:** Developers likely committed their working environment file by mistake because `.env` was missing from `.gitignore`. Example files should use placeholder values rather than real credentials to guide setup without leaking information.
+**Prevention:** Always ensure `.env` and other secret files are included in `.gitignore` from project inception. Use automated secret scanning tools (like gitleaks or GitHub Advanced Security) to detect hardcoded secrets before they are committed. Review example files (`.env.example`) to ensure they only contain placeholder values.
