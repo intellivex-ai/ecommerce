@@ -3,9 +3,13 @@ import { supabase } from './supabaseClient';
 export const productService = {
     // Fetch all products with their categories
     async fetchProducts(filters = {}) {
+        // ⚡ Bolt Optimization: Use !inner join to prevent N+1 queries when filtering by category
+        // This eliminates the need for a separate query to fetch the category ID first.
+        const categoryJoin = filters.categorySlug ? 'categories!inner' : 'categories';
+
         let query = supabase.from('products').select(`
       *,
-      categories (
+      ${categoryJoin} (
         id,
         name,
         slug
@@ -14,16 +18,7 @@ export const productService = {
 
         // Basic filtering
         if (filters.categorySlug) {
-            // Find category first
-            const { data: category } = await supabase
-                .from('categories')
-                .select('id')
-                .eq('slug', filters.categorySlug)
-                .single();
-
-            if (category) {
-                query = query.eq('category_id', category.id);
-            }
+            query = query.eq('categories.slug', filters.categorySlug);
         }
 
         if (filters.search) {
