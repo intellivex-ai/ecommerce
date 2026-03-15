@@ -1,0 +1,3 @@
+## 2024-03-15 - Missing ARIA Labels on Global Navigation Controls
+**Learning:** The global layout component (`Navbar.jsx`) lacked `aria-label`s on core navigation controls (mobile menu, search, user account, cart). This is a critical accessibility issue because it creates a significant blocker for screen reader users on every single page of the application, as these icon-only buttons provide no contextual text.
+**Action:** When creating or reviewing global layout components, prioritize checking for and adding descriptive `aria-label`s to all icon-only interactive elements to ensure foundational accessibility across the entire app.
