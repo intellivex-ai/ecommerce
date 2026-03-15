@@ -1,0 +1,4 @@
+## 2024-05-24 - High-Priority XSS via GSAP Animations Toast Function
+**Vulnerability:** A Cross-Site Scripting (XSS) vulnerability was found in `src/animations/gsapAnimations.js` where the `toastFeedback` function rendered user-supplied `message` variables directly into the DOM using `toast.innerHTML = message`.
+**Learning:** Utility functions in external or seemingly unrelated files (like animation controllers) can often become accidental sinks for XSS when they are globally responsible for rendering dynamic UI components (like toast notifications) across the application.
+**Prevention:** Always use safe DOM APIs like `document.createElement('span')` and set `textContent` (or `innerText`) rather than `innerHTML` when dynamically injecting data into utility components, to ensure user input is safely encoded as text instead of parsed as HTML.
