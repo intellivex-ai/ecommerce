@@ -1,0 +1,3 @@
+## 2024-05-15 - [Product List Memoization]
+**Learning:** In `src/pages/Shop.jsx`, the product list is filtered and sorted on every render, which is an O(n*log(n)) operation. This becomes a performance bottleneck because unrelated state changes (like toggling the mobile filter menu using `showMobileFilters`) trigger a full re-render and recalculation of the filtered list.
+**Action:** Always wrap expensive list filtering/sorting in `useMemo` when the list depends on specific filter states but the component has other unrelated states that trigger re-renders. Also, watch out for unused imports/hooks like `useSearchParams` that could trigger re-renders on route changes.
