@@ -1,0 +1,3 @@
+## 2024-03-24 - Unmemoized Derived State in React with GSAP
+**Learning:** Computing derived lists (like filtering and sorting products) directly in the component body without memoization causes the array reference to change on every render (even unrelated ones like toggling a mobile menu). This not only wastes CPU cycles but more importantly, triggers redundant child component animations (like GSAP staggers) because the child components see a "new" list of items on every render.
+**Action:** Always wrap expensive or frequently re-rendered derived lists inside `useMemo` hooks, especially when passing them down to components that perform animations based on their children.
