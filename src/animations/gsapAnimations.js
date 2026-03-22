@@ -190,10 +190,19 @@ export const toastFeedback = (message, type = 'success') => {
   toast.className = `fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-2xl glass-dark border-brand/20 shadow-premium pointer-events-none flex items-center gap-3`;
   
   const icon = type === 'success' ? '✓' : '!';
-  toast.innerHTML = `
-    <span class="w-5 h-5 rounded-full bg-brand text-white flex items-center justify-center text-[10px] font-black">${icon}</span>
-    <span class="text-white text-xs font-bold uppercase tracking-widest">${message}</span>
-  `;
+
+  // 🛡️ Sentinel Security Enhancement: Replaced unsafe `innerHTML` interpolation with `document.createElement`
+  // and `textContent` to safely inject dynamic messages and mitigate potential DOM-based XSS vulnerabilities.
+  const iconSpan = document.createElement('span');
+  iconSpan.className = 'w-5 h-5 rounded-full bg-brand text-white flex items-center justify-center text-[10px] font-black';
+  iconSpan.textContent = icon;
+
+  const messageSpan = document.createElement('span');
+  messageSpan.className = 'text-white text-xs font-bold uppercase tracking-widest';
+  messageSpan.textContent = message;
+
+  toast.appendChild(iconSpan);
+  toast.appendChild(messageSpan);
   
   document.body.appendChild(toast);
   
