@@ -1,0 +1,3 @@
+## 2024-05-24 - Unmemoized derived state leads to redundant GSAP stagger animations
+**Learning:** Unmemoized array calculations cause unnecessary recalculations and redundant child component animations (e.g., GSAP stagger effects) on unrelated state updates. When expensive derived lists (like product filtering and sorting) aren't wrapped in `useMemo`, any state change causes a full recalculation and can trigger animation restarts.
+**Action:** Always wrap expensive derived lists (like filtering and sorting arrays) in `useMemo` hooks, specifically for components with GSAP animations or complex child rendering, to prevent unnecessary re-renders and animation glitches.
