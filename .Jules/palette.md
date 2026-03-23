@@ -1,0 +1,3 @@
+## 2026-03-23 - ARIA labels for Icon Buttons with Badges
+**Learning:** When creating icon-only buttons with indicator badges (like a shopping cart with an item count badge), the badge itself should be hidden from screen readers using `aria-hidden="true"`. The parent button's `aria-label` should then provide the complete, descriptive text (e.g., "Shopping cart with X items"). This prevents screen readers from redundantly announcing a floating number out of context.
+**Action:** Always check icon buttons with dynamic badges. Place the full context in the button's `aria-label` and apply `aria-hidden="true"` to the badge element itself.
