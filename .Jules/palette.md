@@ -1,0 +1,3 @@
+## 2024-03-24 - Dynamic ARIA labels on Icon Buttons with Badges
+**Learning:** Adding a separate descriptive `aria-label` to an icon button that contains a dynamic badge (e.g., cart count) is not enough. Without `aria-hidden="true"` on the badge element itself, screen readers may announce the full aria-label and then redundantly announce the number floating in the badge separately, causing confusion.
+**Action:** When creating icon buttons with indicator badges (such as a cart item count), always apply `aria-hidden="true"` to the badge and place the full, descriptive text (e.g., "Shopping cart with X items") in the parent button's `aria-label` attribute.
