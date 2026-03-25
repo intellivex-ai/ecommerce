@@ -1,0 +1,3 @@
+## 2024-05-28 - Preventing Redundant Screen Reader Announcements for Indicator Badges
+**Learning:** When creating icon buttons with indicator badges (such as a cart item count badge or notification dot), placing the dynamic text (like "15") purely in the badge without hiding it from screen readers causes confusing, context-free announcements (e.g., "Shopping cart button, 15").
+**Action:** Always apply `aria-hidden="true"` to visual indicator badges. Then, apply a comprehensive, dynamic `aria-label` to the parent button that incorporates both the button's action and the badge's data (e.g., `aria-label="Shopping cart with 15 items"` or `"Shopping cart"` when empty).
