@@ -1,0 +1,4 @@
+## 2024-05-24 - XSS Vulnerability in UI Toast Animations
+**Vulnerability:** A potential Cross-Site Scripting (XSS) vector was found in `src/animations/gsapAnimations.js` where `toast.innerHTML` was used to dynamically inject user-provided message strings into the toast notification component.
+**Learning:** Even utility functions related to animations and UI feedback must handle dynamic input safely. Using `innerHTML` for convenience creates a vulnerable surface area if the message content originates from untrusted user input or unvalidated API responses.
+**Prevention:** Always use safe DOM APIs like `document.createElement()` and `textContent` (or `innerText`) when injecting dynamic text into the DOM, avoiding `innerHTML` and `dangerouslySetInnerHTML` entirely unless strictly necessary and accompanied by rigorous sanitization (e.g., DOMPurify).
