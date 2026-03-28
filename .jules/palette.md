@@ -1,0 +1,3 @@
+## 2024-03-28 - Preventing Redundant Screen Reader Announcements for Indicator Badges
+**Learning:** When adding ARIA labels to icon buttons that have a visual indicator badge (like a shopping cart item count), screen readers will announce both the button's `aria-label` and the text content of the badge separately, causing redundant and confusing announcements (e.g., "Shopping cart with 3 items, 3").
+**Action:** Always apply `aria-hidden="true"` to indicator badges and move the full, descriptive text into the parent button's `aria-label`. This ensures a single, coherent announcement for assistive technologies while preserving the visual badge.
