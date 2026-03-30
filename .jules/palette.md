@@ -1,0 +1,3 @@
+## 2024-03-30 - Hide numeric badges from screen readers
+**Learning:** For interactive elements with numeric badges (like a shopping cart with an item count), exposing the number independently can lead to confusing and redundant readouts for screen reader users. The text of the count inside the badge isn't immediately associated with the function of the parent button unless specifically labeled.
+**Action:** Use `aria-hidden="true"` on the numeric badge itself, and move the full description (e.g., `aria-label="Shopping cart with X items"`) to the parent button to provide a single, comprehensive announcement.
