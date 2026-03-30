@@ -1,0 +1,3 @@
+## 2024-05-24 - Redundant GSAP Animations from Unmemoized Derived Lists
+**Learning:** In this codebase, recalculating expensive derived lists (like product filtering and sorting) without memoization causes unnecessary recalculations and triggers redundant child component animations (e.g., GSAP stagger effects) on unrelated state updates (like toggling a color filter that isn't actually applied yet).
+**Action:** Always wrap expensive, derived lists (especially those mapped to child components with entry animations) inside `useMemo` hooks, specifying the exact dependencies needed to trigger a recalculation.
