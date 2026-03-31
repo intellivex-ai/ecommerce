@@ -1,0 +1,3 @@
+## 2024-05-24 - Add ARIA Labels to Navbar Icon Buttons
+**Learning:** Adding dynamic ARIA labels (e.g., `aria-label={cartCount > 0 ? \`Shopping cart with ${cartCount} items\` : "Shopping cart"}`) to icon buttons that also have a visual badge indicator is significantly improved when the badge itself is marked with `aria-hidden="true"`. This prevents screen readers from redundantly announcing the badge number out of context.
+**Action:** Always apply `aria-hidden="true"` to visual indicator badges (like cart item counts) when the parent button's `aria-label` already contains the full descriptive text.
