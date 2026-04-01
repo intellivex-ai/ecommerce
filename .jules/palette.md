@@ -1,0 +1,3 @@
+## 2024-05-24 - Accessibility for Icon Buttons with Badges
+**Learning:** Found a common accessibility pattern in the Navbar where an icon button (cart) contained a badge with a dynamic count. If only an `aria-label` is added to the button without hiding the badge, screen readers may redundantly read both the button's label and the badge's content (e.g., "Shopping cart with 3 items, 3").
+**Action:** When adding `aria-label` to icon buttons that contain visual badges (like notifications or cart items), always add `aria-hidden="true"` to the badge element itself and ensure the parent button's `aria-label` includes the full descriptive text including the dynamic count.
