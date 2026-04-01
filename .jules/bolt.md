@@ -1,0 +1,3 @@
+## 2024-05-24 - Memoize Expensive Derived Lists to Prevent Redundant Re-renders and Animations
+**Learning:** Unmemoized array filtering/sorting in React components creates new array references on every render. This not only wastes CPU cycles but triggers redundant child component effects—such as `GSAP staggerItems` animations firing repeatedly—on unrelated state updates (like toggling a mobile menu).
+**Action:** Always wrap derived array calculations (filtering, sorting, mapping) in `useMemo` when passing the result as a prop to components that rely on reference stability for `useEffect` dependency arrays.
