@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Filter, ChevronDown, SlidersHorizontal, Grid, List, Search, X } from 'lucide-react';
 import ProductGrid from '../components/ProductGrid';
@@ -32,15 +32,20 @@ const Shop = () => {
     pageEnter(ref.current);
   }, []);
 
-  const filtered = products
-    .filter((p) => selectedCat === 'All' || p.category_id === selectedCat || p.categories?.name === selectedCat)
-    .filter((p) => p.price <= priceMax)
-    .sort((a, b) => {
-      if (sort === 'price-low') return a.price - b.price;
-      if (sort === 'price-high') return b.price - a.price;
-      if (sort === 'popular') return (b.reviewCount || 0) - (a.reviewCount || 0);
-      return new Date(b.created_at) - new Date(a.created_at);
-    });
+  // Optimization: Memoize the filtered and sorted product list.
+  // This prevents recalculating the array on unrelated state updates (like selectedColors or mobile filter toggles),
+  // which causes redundant GSAP stagger effect animations in child components.
+  const filtered = useMemo(() => {
+    return products
+      .filter((p) => selectedCat === 'All' || p.category_id === selectedCat || p.categories?.name === selectedCat)
+      .filter((p) => p.price <= priceMax)
+      .sort((a, b) => {
+        if (sort === 'price-low') return a.price - b.price;
+        if (sort === 'price-high') return b.price - a.price;
+        if (sort === 'popular') return (b.reviewCount || 0) - (a.reviewCount || 0);
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
+  }, [products, selectedCat, priceMax, sort]);
 
   return (
     <div ref={ref} className="bg-brandOffWhite min-h-screen relative overflow-hidden">
