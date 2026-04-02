@@ -1,0 +1,3 @@
+## 2025-02-14 - Unmemoized arrays causing GSAP stagger re-triggers
+**Learning:** In a React codebase using GSAP for child animations (like stagger effects in `ProductGrid`), unmemoized derived arrays (e.g., filtered lists) are re-created on every unrelated state update (like toggling a color filter). This reference change causes child components to unnecessarily re-render and re-trigger complex GSAP animations, leading to jank.
+**Action:** Always wrap expensive, derived lists passed to animated child components in `useMemo` hooks to maintain referential stability during unrelated local state updates.
