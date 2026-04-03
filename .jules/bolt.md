@@ -1,0 +1,3 @@
+## 2024-04-03 - Prevent Redundant GSAP Stagger Animations with useMemo
+**Learning:** In React applications using GSAP stagger animations on arrays of elements (like `ProductGrid.jsx`), unmemoized array calculations in parent components (like `Shop.jsx`) cause new array references on every render. This forces child components to re-run their `useEffect` hooks, triggering redundant, expensive GSAP stagger animations across the entire grid even on unrelated state updates (e.g., toggling a mobile menu).
+**Action:** Always wrap derived arrays passed to GSAP-animated child components in `useMemo` to maintain referential equality across unrelated renders, preventing unexpected animation re-triggers and ensuring smooth performance.
