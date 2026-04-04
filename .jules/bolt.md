@@ -1,0 +1,3 @@
+## 2024-06-25 - Prevent Unnecessary Child Animations by Memoizing Derived Filtered Data
+**Learning:** In the Shop component, unmemoized array calculations (like filtering and sorting products) caused the `filtered` variable to point to a new array reference on *every* state update, even unrelated ones like toggling the mobile menu. This re-rendered the `ProductGrid` and incorrectly re-triggered its internal GSAP stagger animations.
+**Action:** Always wrap expensive or derived lists that are passed as props to animated child components inside `useMemo`, depending on their relevant state variables.
