@@ -1,0 +1,1 @@
+## 2024-05-24 - Screen Reader Optimization for Cart Badges\n**Learning:** When using floating indicator badges (like item counts) inside icon buttons, screen readers often read the label and the badge text redundantly. \n**Action:** Add `aria-hidden="true"` to the badge element itself, and embed the dynamic count into the parent button's main `aria-label`.
