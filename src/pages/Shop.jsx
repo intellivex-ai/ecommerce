@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Filter, ChevronDown, SlidersHorizontal, Grid, List, Search, X } from 'lucide-react';
 import ProductGrid from '../components/ProductGrid';
@@ -32,15 +32,29 @@ const Shop = () => {
     pageEnter(ref.current);
   }, []);
 
-  const filtered = products
-    .filter((p) => selectedCat === 'All' || p.category_id === selectedCat || p.categories?.name === selectedCat)
-    .filter((p) => p.price <= priceMax)
-    .sort((a, b) => {
-      if (sort === 'price-low') return a.price - b.price;
-      if (sort === 'price-high') return b.price - a.price;
-      if (sort === 'popular') return (b.reviewCount || 0) - (a.reviewCount || 0);
-      return new Date(b.created_at) - new Date(a.created_at);
+  // ⚡ Bolt: Memoize the filtered product list to prevent recalculating
+  // an expensive filter and sort array on every render cycle (e.g. when mobile menu toggles)
+  const filtered = useMemo(() => {
+    return products
+      .filter((p) => selectedCat === 'All' || p.category_id === selectedCat || p.categories?.name === selectedCat)
+      .filter((p) => p.price <= priceMax)
+      .sort((a, b) => {
+        if (sort === 'price-low') return a.price - b.price;
+        if (sort === 'price-high') return b.price - a.price;
+        if (sort === 'popular') return (b.reviewCount || 0) - (a.reviewCount || 0);
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
+  }, [products, selectedCat, priceMax, sort]);
+
+  // ⚡ Bolt: Calculate derived category counts once rather than O(N * C)
+  // inline inside the JSX mapping loop for the sidebar.
+  const categoryCounts = useMemo(() => {
+    const counts = { All: products.length };
+    CATEGORIES.filter(c => c !== 'All').forEach(cat => {
+      counts[cat] = products.filter((p) => p.categories?.name === cat || p.series === cat).length;
     });
+    return counts;
+  }, [products]);
 
   return (
     <div ref={ref} className="bg-brandOffWhite min-h-screen relative overflow-hidden">
@@ -123,7 +137,7 @@ const Shop = () => {
                         "text-[10px] font-black px-2 py-0.5 rounded-full",
                         selectedCat === cat ? "bg-white/10 text-white" : "bg-slate-100 text-slate-400 group-hover:bg-brand/10 group-hover:text-brand"
                       )}>
-                        {cat === 'All' ? products.length : products.filter((p) => p.categories?.name === cat || p.series === cat).length}
+                        {categoryCounts[cat] || 0}
                       </span>
                     </button>
                   </li>
