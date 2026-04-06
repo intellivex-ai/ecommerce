@@ -1,0 +1,3 @@
+## 2024-04-06 - Memoize derived product lists to prevent redundant GSAP animations
+**Learning:** Unmemoized array calculations (like filtering and sorting products) in parent components cause unnecessary recalculations on unrelated state updates. More importantly, this triggers redundant child component animations (e.g., GSAP stagger effects in `ProductGrid` which relies on `products` reference equality) even when the data hasn't changed.
+**Action:** Wrap expensive, derived lists (like product filtering and sorting) inside `useMemo` hooks to maintain referential stability, especially when child components rely on these lists for animation triggers or expensive renders.
