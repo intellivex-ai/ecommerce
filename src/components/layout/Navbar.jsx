@@ -73,6 +73,7 @@ const Navbar = () => {
                     <div className="flex items-center gap-2 lg:hidden">
                         <button 
                             onClick={() => setIsMenuOpen(true)}
+                            aria-label="Open mobile menu"
                             className="p-2 hover:bg-black/5 rounded-full transition-colors"
                         >
                             <Menu className="w-6 h-6 text-brandCharcoal" strokeWidth={1.5} />
@@ -107,6 +108,7 @@ const Navbar = () => {
                     <div className="flex items-center gap-1 sm:gap-3">
                         <button 
                             onClick={() => setIsSearchOpen(true)}
+                            aria-label="Open search"
                             className="p-2 sm:p-2.5 hover:bg-black/5 rounded-full transition-colors group relative"
                         >
                             <Search className="w-5 h-5 text-brandCharcoal group-hover:text-brand transition-colors" strokeWidth={1.5} />
@@ -114,17 +116,19 @@ const Navbar = () => {
                               <span className="text-[7px]">CTRL</span> K
                             </span>
                         </button>
-                        <Link to="/account" className="p-2 sm:p-2.5 hover:bg-black/5 rounded-full transition-colors hidden sm:flex group">
+                        <Link to="/account" aria-label="My Account" className="p-2 sm:p-2.5 hover:bg-black/5 rounded-full transition-colors hidden sm:flex group">
                             <User className="w-5 h-5 text-brandCharcoal group-hover:text-brand transition-colors" strokeWidth={1.5} />
                         </Link>
                         <button
                             onClick={handleCartClick}
+                            aria-label={cartCount > 0 ? `Shopping cart with ${cartCount} items` : "Shopping cart"}
                             className="p-2 sm:p-2.5 hover:bg-black/5 rounded-full transition-colors relative group"
                         >
                             <ShoppingBag className="w-5 h-5 text-brandCharcoal group-hover:text-brand transition-colors" strokeWidth={1.5} />
                             {cartCount > 0 && (
                                 <span
                                     ref={badgeRef}
+                                    aria-hidden="true"
                                     className="absolute top-0 right-0 bg-brand text-white text-[10px] w-[18px] h-[18px] flex items-center justify-center rounded-full font-bold shadow-soft ring-2 ring-white"
                                 >
                                     {cartCount}
@@ -165,7 +169,7 @@ const Navbar = () => {
                         <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-2xl font-black tracking-tighter text-brandCharcoal">
                             VELOCITY<span className="text-brand">.</span>
                         </Link>
-                        <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-black/5 rounded-full transition-colors">
+                        <button onClick={() => setIsMenuOpen(false)} aria-label="Close mobile menu" className="p-2 hover:bg-black/5 rounded-full transition-colors">
                             <X className="w-6 h-6 text-brandCharcoal" />
                         </button>
                     </div>
