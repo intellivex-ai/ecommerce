@@ -1,0 +1,3 @@
+## 2024-04-07 - GSAP Stagger Animations and Unmemoized Arrays
+**Learning:** Unmemoized array calculations (like derived lists for filtering and sorting) passed down as props cause the child component (`ProductGrid`) to re-render. Since `ProductGrid` uses a `useEffect` on `[products]` to trigger GSAP stagger animations, these animations are unnecessarily re-triggered on unrelated state updates when the array reference changes.
+**Action:** Always wrap expensive, derived lists in `useMemo` hooks before passing them to child components that perform animations or heavy lifting on their `useEffect` dependency arrays, particularly when using GSAP for list elements.
