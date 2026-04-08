@@ -1,0 +1,4 @@
+## 2024-05-18 - Prevent Privilege Escalation in Profiles RLS
+**Vulnerability:** Missing `WITH CHECK` constraints on `public.profiles` RLS update policies and missing admin enforcement on sensitive tables (`products`, `orders`). Users could escalate privileges by modifying their own `is_admin` field if it existed, and could insert/update/delete sensitive records.
+**Learning:** Supabase RLS policies on tables like `public.profiles` must explicitly prevent users from modifying restricted fields (like `is_admin`) using `WITH CHECK` conditions comparing the incoming update against the current record (`is_admin = (select is_admin from public.profiles where id = auth.uid())`).
+**Prevention:** Always pair `FOR UPDATE USING` conditions with `WITH CHECK` constraints when certain columns in a user's own profile should be immutable or protected from self-modification.
