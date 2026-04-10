@@ -1,0 +1,3 @@
+## 2025-02-16 - Add ARIA labels to Navbar icon-only interactive elements
+**Learning:** Foundational accessibility in global layout components like `Navbar` requires descriptive `aria-label`s on icon-only interactive elements. When an icon button has a visual indicator badge (like a cart item count), the parent button should have the full descriptive text in its `aria-label`, and the badge element should be marked with `aria-hidden="true"` to prevent redundant screen reader announcements.
+**Action:** Always prioritize adding descriptive `aria-label` attributes to icon-only interactive elements. For buttons with dynamic badges, apply `aria-hidden="true"` to the badge and update the parent button's `aria-label` dynamically to include the badge's information.
