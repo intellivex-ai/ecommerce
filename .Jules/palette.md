@@ -1,0 +1,3 @@
+## 2026-04-12 - Accessible Icon Buttons with Dynamic Badges
+**Learning:** When creating icon-only buttons with indicator badges (such as a cart item count), the standard approach of placing the screen reader text inside a visually hidden span next to the icon can result in redundant or confusing announcements (e.g., "Shopping cart 3").
+**Action:** Apply `aria-hidden="true"` to both the decorative icon and the numerical badge itself. Place the full, descriptive text (e.g., "Shopping cart with 3 items") directly in the parent button's `aria-label` to ensure a single, clear, and contextual announcement for screen readers.
