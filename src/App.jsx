@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useUserStore } from './store/userStore';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Home from './pages/Home';
@@ -39,8 +40,10 @@ const Layout = ({ children }) => {
     );
 };
 
-const AppRoutes = () => (
-    <PageTransition>{(location) => (
+const AppRoutes = () => {
+    const { profile } = useUserStore();
+    return (
+        <PageTransition>{(location) => (
             <>
                 <ScrollToTop />
                 <Layout>
@@ -51,14 +54,15 @@ const AppRoutes = () => (
                         <Route path="/cart" element={<Cart />} />
                         <Route path="/checkout" element={<Checkout />} />
                         <Route path="/account" element={<Account />} />
-                        <Route path="/admin" element={<AdminPanel />} />
+                        <Route path="/admin" element={profile?.is_admin ? <AdminPanel /> : <Navigate to="/" />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                     </Routes>
                 </Layout>
             </>
         )}</PageTransition>
-);
+    );
+};
 
 const App = () => {
     const [isLoaded, setIsLoaded] = useState(false);
