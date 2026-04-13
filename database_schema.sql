@@ -9,6 +9,7 @@ create table public.profiles (
   full_name text,
   avatar_url text,
   phone text,
+  is_admin boolean default false not null,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
@@ -142,9 +143,15 @@ create policy "Categories are viewable by everyone." on public.categories for se
 
 -- Products: Read-only for public
 create policy "Products are viewable by everyone." on public.products for select using (true);
-create policy "Products can be inserted by anyone." on public.products for insert with check (true);
-create policy "Products can be updated by anyone." on public.products for update using (true);
-create policy "Products can be deleted by anyone." on public.products for delete using (true);
+create policy "Products can be inserted by admins." on public.products for insert with check (
+  exists (select 1 from public.profiles where id = auth.uid() and is_admin = true)
+);
+create policy "Products can be updated by admins." on public.products for update using (
+  exists (select 1 from public.profiles where id = auth.uid() and is_admin = true)
+);
+create policy "Products can be deleted by admins." on public.products for delete using (
+  exists (select 1 from public.profiles where id = auth.uid() and is_admin = true)
+);
 
 -- Addresses: Users can CRUD their own addresses
 create policy "Users can view own addresses." on public.addresses for select using (auth.uid() = user_id);
@@ -153,9 +160,13 @@ create policy "Users can update own addresses." on public.addresses for update u
 create policy "Users can delete own addresses." on public.addresses for delete using (auth.uid() = user_id);
 
 -- Orders: Users can view their own orders, insert their own orders. Only backend service/admin should update status.
-create policy "Users can view own orders." on public.orders for select using (auth.uid() = user_id);
+create policy "Users can view own orders." on public.orders for select using (
+  auth.uid() = user_id or exists (select 1 from public.profiles where id = auth.uid() and is_admin = true)
+);
 create policy "Users can insert own orders." on public.orders for insert with check (auth.uid() = user_id);
-create policy "Anyone can update orders." on public.orders for update using (true);
+create policy "Admins can update orders." on public.orders for update using (
+  exists (select 1 from public.profiles where id = auth.uid() and is_admin = true)
+);
 
 -- Order Items: Viewable if you own the order
 create policy "Users can view own order items." on public.order_items for select using (
