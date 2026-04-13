@@ -1,0 +1,3 @@
+## 2024-04-13 - [Combine ARIA label with hidden elements for complex icon buttons]
+**Learning:** When creating icon buttons with indicator badges (such as a cart item count), applying `aria-hidden="true"` to both the decorative icon and the numerical badge itself, while placing the full, descriptive text in the parent button's `aria-label` (e.g., "Shopping cart with X items") prevents screen readers from announcing floating numbers redundantly.
+**Action:** Always use dynamic `aria-label`s on the parent button for dynamic icon states and explicitly hide child icons/badges with `aria-hidden="true"`.
