@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { 
   Heart, 
@@ -61,7 +61,13 @@ const Product = () => {
   const [reviews, setReviews] = useState([]);
   const [stockLevel, setStockLevel] = useState(0);
 
-  const related = products.filter(p => String(p.id) !== String(id)).slice(0, 4);
+  // ⚡ Bolt Performance Optimization:
+  // Wrapped related product calculation in useMemo.
+  // Impact: Avoids array reconstruction when unrelated state changes occur,
+  // preventing unnecessary re-renders in child components relying on referential equality.
+  const related = useMemo(() => {
+    return products.filter(p => String(p.id) !== String(id)).slice(0, 4);
+  }, [products, id]);
 
   const [selectedImg, setSelectedImg] = useState(0);
   const [selectedColor, setSelectedColor] = useState(null);

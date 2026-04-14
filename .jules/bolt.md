@@ -1,0 +1,5 @@
+## 2024-03-20 - Unmemoized Array Calculations and Redundant Child Component Animations
+
+**Learning:** Unmemoized array calculations for derived lists (e.g., product filtering and sorting in parent components like `Shop.jsx` and `Product.jsx`) cause unnecessary referential inequality on every render. Because the `useProducts` hook implements a Supabase realtime subscription that triggers a re-fetch of all products on any database update, these unmemoized derived lists trigger redundant recalculations. Even worse, since `ProductGrid.jsx` uses `products` as a dependency for its `useEffect` containing `staggerItems` (GSAP stagger effects), these unrelated state updates cause the entire grid animation to replay unnecessarily, degrading perceived performance.
+
+**Action:** Always wrap expensive derived lists (like sorting and filtering full arrays) in `useMemo` hooks, especially when passing them to child components that trigger DOM-heavy operations or animations (like GSAP) based on reference equality.
