@@ -1,0 +1,3 @@
+## 2026-04-15 - Accessible Icon Buttons with Indicator Badges
+**Learning:** When creating icon buttons that contain indicator badges (like a shopping cart with an item count), screen readers will redundantly read both the icon and the dynamic number if not properly configured. Applying `aria-hidden="true"` to both the decorative icon and the badge prevents this, allowing the parent button's `aria-label` (e.g., "Shopping cart with X items") to provide a clean, unified announcement.
+**Action:** Always verify that compound icon buttons combine their visual elements into a single `aria-label` on the parent, while hiding the individual child elements from screen readers.
