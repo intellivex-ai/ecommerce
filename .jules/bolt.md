@@ -1,0 +1,3 @@
+## 2024-06-12 - Prevent redundant GSAP stagger animations
+**Learning:** Unmemoized array calculations for derived lists (e.g., product filtering and sorting in parent components like `Shop.jsx` and `Home.jsx`) create new array references on every render. This causes unnecessary recalculations and triggers redundant child component animations (specifically GSAP stagger effects in `ProductGrid.jsx`'s `useEffect`) on unrelated state updates.
+**Action:** Always wrap expensive derived lists (filtering/sorting/slicing) in `useMemo` hooks, particularly when the resulting array is passed to components that rely on reference equality for `useEffect` dependency arrays to trigger animations.
