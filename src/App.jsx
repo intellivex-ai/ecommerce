@@ -15,6 +15,15 @@ import LoadingScreen from './components/ui/LoadingScreen';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 import PageTransition from './components/ui/PageTransition';
 import CustomCursor from './components/ui/CustomCursor';
+import { useAuth } from './hooks/useAuth';
+import { Navigate } from 'react-router-dom';
+
+const AdminRoute = ({ children }) => {
+    const { profile, loading } = useAuth();
+    if (loading) return <LoadingScreen />;
+    if (!profile?.is_admin) return <Navigate to="/" replace />;
+    return children;
+};
 
 const ScrollToTop = () => {
     const { pathname } = useLocation();
@@ -51,7 +60,7 @@ const AppRoutes = () => (
                         <Route path="/cart" element={<Cart />} />
                         <Route path="/checkout" element={<Checkout />} />
                         <Route path="/account" element={<Account />} />
-                        <Route path="/admin" element={<AdminPanel />} />
+                        <Route path="/admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                     </Routes>
