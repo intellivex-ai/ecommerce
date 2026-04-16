@@ -1,0 +1,3 @@
+## 2025-02-25 - Prevent redundant GSAP stagger animations by memoizing derived arrays
+**Learning:** In this codebase, unmemoized array calculations for derived lists (like sorting and filtering `products` in parent components like `Shop.jsx`) not only cause unnecessary O(N) or O(N log N) recalculations but also inadvertently trigger redundant GSAP stagger effects in child components (e.g., `ProductGrid.jsx`) whenever any unrelated state in the parent updates (e.g., `selectedColors` or `showMobileFilters`).
+**Action:** Always wrap expensive derived lists that are passed as props to animation-heavy child components in a `useMemo` hook to ensure referential stability and prevent costly animation re-triggers.
