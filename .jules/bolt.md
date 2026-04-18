@@ -1,0 +1,3 @@
+## 2024-04-18 - Unmemoized arrays trigger GSAP animations
+**Learning:** In this codebase, the Supabase realtime listener for 'products' re-fetches data on updates. Unmemoized array calculations in parent components (like `Shop.jsx` and `Home.jsx`) lead to referential inequality of the `products` prop passed to `ProductGrid`. This causes `useEffect` within `ProductGrid` to re-run and re-trigger GSAP stagger animations on unrelated state changes (like filter mobile menu toggle), degrading performance.
+**Action:** Always wrap expensive derived lists (e.g. `filtered` or `sliced` product lists) passed to animated child components in `useMemo` to preserve referential equality when dependencies don't change.
