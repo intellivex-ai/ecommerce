@@ -1,0 +1,3 @@
+## 2024-05-18 - Accessibility: Indicator Badge Announcements
+**Learning:** When adding numerical indicator badges to icon buttons (like a cart count), placing the total count directly inside the button along with an icon causes screen readers to redundantly announce both the icon name and the raw number in an unhelpful way (e.g. "Shopping cart, 3, button").
+**Action:** Apply `aria-hidden="true"` to both the decorative icon and the numerical badge itself. Then, provide the full context in the parent button’s `aria-label` (e.g., `aria-label="Shopping cart with X items"`) to ensure a smooth, complete announcement.
