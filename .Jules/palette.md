@@ -1,0 +1,3 @@
+## 2024-03-24 - Accessibility for Icon Badges
+**Learning:** When creating icon buttons with indicator badges (such as a cart item count), adding `aria-hidden="true"` to both the decorative icon and the numerical badge itself prevents screen readers from announcing floating numbers redundantly.
+**Action:** Place the full, descriptive text (e.g., "Shopping cart with X items") in the parent button's `aria-label` and apply `aria-hidden="true"` to all child elements.
