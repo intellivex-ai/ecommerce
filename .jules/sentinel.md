@@ -1,0 +1,4 @@
+## 2024-05-24 - Critical Authorization Bypass and Privilege Escalation
+**Vulnerability:** The application was using an insecure string comparison (`profile?.full_name === 'Admin'`) in `Account.jsx` for UI visibility, completely lacking route protection in `Admin.jsx`, and employing overly permissive RLS policies for `products` and `orders` that didn't strictly verify an explicit admin flag.
+**Learning:** Client-side UI hiding without server-side database checks and backend route validation allows total systemic compromise by manipulating client state or querying the database directly.
+**Prevention:** Authorization must always be grounded in explicitly managed, server-verified flags (e.g., an `is_admin` boolean protected by RLS `WITH CHECK` constraints) and applied concurrently across UI rendering, route access, and database transactions.
