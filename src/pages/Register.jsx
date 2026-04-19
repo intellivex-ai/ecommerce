@@ -18,7 +18,6 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { pageEnter } from '../animations/gsapAnimations';
-import { twMerge } from 'tailwind-merge';
 
 const Register = () => {
     const [fullName, setFullName] = useState('');

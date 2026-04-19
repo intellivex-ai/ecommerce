@@ -22,8 +22,10 @@ import {
   Image as ImageIcon,
   BarChart3
 } from 'lucide-react';
-import { pageEnter, staggerItems } from '../animations/gsapAnimations';
+import { pageEnter } from '../animations/gsapAnimations';
 import { twMerge } from 'tailwind-merge';
+import { useAuth } from '../hooks/useAuth';
+import { Navigate } from 'react-router-dom';
 
 const STATUS_COLORS = {
   pending: 'bg-amber-100 text-amber-700 border-amber-200',
@@ -53,30 +55,50 @@ const AdminPanel = () => {
         totalUsers: 8492 // Mocked for now
     });
 
+    const { profile, loading: authLoading } = useAuth();
+
     useEffect(() => {
-        fetchOrders();
-        if (mainRef.current) pageEnter(mainRef.current);
-    }, []);
+        let mounted = true;
+        const loadOrders = async () => {
+            setOrdersLoading(true);
+            try {
+                const data = await adminService.fetchAllOrders();
+                if (mounted) {
+                    setOrders(data || []);
+                    const rev = (data || []).reduce((acc, order) => acc + Number(order.total_price || 0), 0);
+                    setStats(prev => ({ ...prev, revenue: rev, totalOrders: data?.length || 0 }));
+                }
+            } catch (err) {
+                console.error('Failed to load orders', err);
+            } finally {
+                if (mounted) setOrdersLoading(false);
+            }
+        };
 
-    const fetchOrders = async () => {
-        setOrdersLoading(true);
-        try {
-            const data = await adminService.fetchAllOrders();
-            setOrders(data || []);
-
-            const rev = (data || []).reduce((acc, order) => acc + Number(order.total_price || 0), 0);
-            setStats(prev => ({ ...prev, revenue: rev, totalOrders: data?.length || 0 }));
-        } catch (err) {
-            console.error('Failed to load orders', err);
-        } finally {
-            setOrdersLoading(false);
+        if (!authLoading && profile?.is_admin) {
+            loadOrders();
+            if (mainRef.current) pageEnter(mainRef.current);
         }
-    };
+
+        return () => { mounted = false; };
+    }, [authLoading, profile]);
+
+    if (authLoading) return (
+        <div className="min-h-screen bg-brandOffWhite flex items-center justify-center">
+            <div className="w-12 h-12 border-4 border-brand/20 border-t-brand rounded-full animate-spin"></div>
+        </div>
+    );
+
+    if (!profile?.is_admin) {
+        return <Navigate to="/" replace />;
+    }
 
     const handleUpdateOrderStatus = async (orderId, newStatus) => {
         try {
             await adminService.updateOrderStatus(orderId, newStatus);
-            fetchOrders();
+            // Re-fetch handled automatically by refresh hooks or could be done by a store.
+            // For now, reload window to ensure sync since we removed standalone fetchOrders
+            window.location.reload();
         } catch (err) {
             alert('Failed to update status: ' + err.message);
         }
