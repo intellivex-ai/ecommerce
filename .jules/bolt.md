@@ -1,0 +1,3 @@
+## 2024-04-20 - Unmemoized Derived Lists Triggering Redundant Child Animations
+**Learning:** In React, passing an unmemoized derived array (like filtered/sorted products) as a prop to a child component causes the child to perceive a new array reference on every parent render. In this codebase, this triggered redundant, expensive GSAP stagger animations in `ProductGrid.jsx` (which relies on `[products]` in its `useEffect` dependency array) whenever unrelated parent state (e.g., toggling the mobile filters menu) changed.
+**Action:** Always wrap expensive derived lists in `useMemo` hooks before passing them to child components, especially if those children trigger DOM animations or heavy effects based on prop identity.
