@@ -1,0 +1,3 @@
+## 2024-06-25 - React Memoization impact on GSAP Animations
+**Learning:** Unmemoized array calculations for derived lists (e.g., product filtering, sorting, or slicing in parent components like `Shop.jsx` or `Home.jsx`) cause the array reference to change on every render. Because the `ProductGrid.jsx` component uses GSAP stagger effects bounded to its `products` dependency, this triggers redundant and visually disruptive re-animations of the entire grid even on unrelated state updates.
+**Action:** Always wrap expensive or derived lists (especially those passed to components with enter/update animations like `ProductGrid`) in `useMemo` hooks.
