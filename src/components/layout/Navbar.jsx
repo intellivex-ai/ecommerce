@@ -74,15 +74,17 @@ const Navbar = () => {
                         <button 
                             onClick={() => setIsMenuOpen(true)}
                             className="p-2 hover:bg-black/5 rounded-full transition-colors"
+                            aria-label="Open mobile menu"
+                            aria-expanded={isMenuOpen}
                         >
-                            <Menu className="w-6 h-6 text-brandCharcoal" strokeWidth={1.5} />
+                            <Menu className="w-6 h-6 text-brandCharcoal" strokeWidth={1.5} aria-hidden="true" />
                         </button>
                     </div>
 
                     {/* Logo + Nav links */}
                     <div className="flex items-center gap-10">
                         <Link to="/" className="text-2xl sm:text-3xl font-extrabold tracking-tighter text-brandCharcoal hover:opacity-80 transition-opacity flex items-center gap-2">
-                            <Zap className="w-6 h-6 text-brand lg:hidden" fill="currentColor" />
+                            <Zap className="w-6 h-6 text-brand lg:hidden" fill="currentColor" aria-hidden="true" />
                             <span className="hidden sm:inline">VELOCITY</span><span className="text-brand hidden sm:inline">.</span>
                             <span className="sm:hidden">VELOCITY</span>
                         </Link>
@@ -108,24 +110,28 @@ const Navbar = () => {
                         <button 
                             onClick={() => setIsSearchOpen(true)}
                             className="p-2 sm:p-2.5 hover:bg-black/5 rounded-full transition-colors group relative"
+                            aria-label="Open search"
+                            aria-expanded={isSearchOpen}
                         >
-                            <Search className="w-5 h-5 text-brandCharcoal group-hover:text-brand transition-colors" strokeWidth={1.5} />
-                            <span className="hidden xl:inline-flex absolute left-full ml-4 top-1/2 -translate-y-1/2 items-center gap-1 px-2 py-1 bg-brandOffWhite border border-brandCharcoal/5 rounded-lg text-[9px] font-black text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Search className="w-5 h-5 text-brandCharcoal group-hover:text-brand transition-colors" strokeWidth={1.5} aria-hidden="true" />
+                            <span className="hidden xl:inline-flex absolute left-full ml-4 top-1/2 -translate-y-1/2 items-center gap-1 px-2 py-1 bg-brandOffWhite border border-brandCharcoal/5 rounded-lg text-[9px] font-black text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true">
                               <span className="text-[7px]">CTRL</span> K
                             </span>
                         </button>
-                        <Link to="/account" className="p-2 sm:p-2.5 hover:bg-black/5 rounded-full transition-colors hidden sm:flex group">
-                            <User className="w-5 h-5 text-brandCharcoal group-hover:text-brand transition-colors" strokeWidth={1.5} />
+                        <Link to="/account" className="p-2 sm:p-2.5 hover:bg-black/5 rounded-full transition-colors hidden sm:flex group" aria-label="Go to account">
+                            <User className="w-5 h-5 text-brandCharcoal group-hover:text-brand transition-colors" strokeWidth={1.5} aria-hidden="true" />
                         </Link>
                         <button
                             onClick={handleCartClick}
                             className="p-2 sm:p-2.5 hover:bg-black/5 rounded-full transition-colors relative group"
+                            aria-label={`Shopping cart${cartCount > 0 ? ` with ${cartCount} items` : ''}`}
                         >
-                            <ShoppingBag className="w-5 h-5 text-brandCharcoal group-hover:text-brand transition-colors" strokeWidth={1.5} />
+                            <ShoppingBag className="w-5 h-5 text-brandCharcoal group-hover:text-brand transition-colors" strokeWidth={1.5} aria-hidden="true" />
                             {cartCount > 0 && (
                                 <span
                                     ref={badgeRef}
                                     className="absolute top-0 right-0 bg-brand text-white text-[10px] w-[18px] h-[18px] flex items-center justify-center rounded-full font-bold shadow-soft ring-2 ring-white"
+                                    aria-hidden="true"
                                 >
                                     {cartCount}
                                 </span>
@@ -165,13 +171,13 @@ const Navbar = () => {
                         <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-2xl font-black tracking-tighter text-brandCharcoal">
                             VELOCITY<span className="text-brand">.</span>
                         </Link>
-                        <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-black/5 rounded-full transition-colors">
-                            <X className="w-6 h-6 text-brandCharcoal" />
+                        <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-black/5 rounded-full transition-colors" aria-label="Close mobile menu">
+                            <X className="w-6 h-6 text-brandCharcoal" aria-hidden="true" />
                         </button>
                     </div>
 
                     <nav className="flex-1 space-y-6">
-                        {NAV_LINKS.map((link, i) => (
+                        {NAV_LINKS.map((link) => (
                             <NavLink
                                 key={link.name}
                                 to={link.path}
@@ -191,7 +197,7 @@ const Navbar = () => {
                             onClick={() => setIsMenuOpen(false)}
                             className="flex items-center gap-4 text-sm font-black uppercase tracking-widest text-brandCharcoal"
                         >
-                            <User className="w-5 h-5 text-brand" />
+                            <User className="w-5 h-5 text-brand" aria-hidden="true" />
                             Command Center
                         </Link>
                         <div className="p-6 bg-brandOffWhite rounded-[2rem] border border-brandCharcoal/5">
