@@ -1,5 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useRef, useEffect, useState, useMemo } from 'react';
 import { Filter, ChevronDown, SlidersHorizontal, Grid, List, Search, X } from 'lucide-react';
 import ProductGrid from '../components/ProductGrid';
 import { useProducts } from '../hooks/useProducts';
@@ -18,7 +17,6 @@ const SORT_OPTIONS = [
 
 const Shop = () => {
   const ref = useRef(null);
-  const [searchParams] = useSearchParams();
   const [selectedCat, setSelectedCat] = useState('All');
   const [sort, setSort] = useState('newest');
   const [priceMax, setPriceMax] = useState(300);
@@ -32,15 +30,20 @@ const Shop = () => {
     pageEnter(ref.current);
   }, []);
 
-  const filtered = products
-    .filter((p) => selectedCat === 'All' || p.category_id === selectedCat || p.categories?.name === selectedCat)
-    .filter((p) => p.price <= priceMax)
-    .sort((a, b) => {
-      if (sort === 'price-low') return a.price - b.price;
-      if (sort === 'price-high') return b.price - a.price;
-      if (sort === 'popular') return (b.reviewCount || 0) - (a.reviewCount || 0);
-      return new Date(b.created_at) - new Date(a.created_at);
-    });
+  // Performance Optimization: Wrap derived product list in useMemo to prevent
+  // unnecessary recalculations and redundant child component animations
+  // (GSAP stagger effects in ProductGrid) on unrelated state updates like showMobileFilters.
+  const filtered = useMemo(() => {
+    return products
+      .filter((p) => selectedCat === 'All' || p.category_id === selectedCat || p.categories?.name === selectedCat)
+      .filter((p) => p.price <= priceMax)
+      .sort((a, b) => {
+        if (sort === 'price-low') return a.price - b.price;
+        if (sort === 'price-high') return b.price - a.price;
+        if (sort === 'popular') return (b.reviewCount || 0) - (a.reviewCount || 0);
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
+  }, [products, selectedCat, priceMax, sort]);
 
   return (
     <div ref={ref} className="bg-brandOffWhite min-h-screen relative overflow-hidden">
