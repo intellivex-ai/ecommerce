@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import { 
   adminService } from '../services/adminService';
 import { useProducts } from '../hooks/useProducts';
@@ -22,7 +24,7 @@ import {
   Image as ImageIcon,
   BarChart3
 } from 'lucide-react';
-import { pageEnter, staggerItems } from '../animations/gsapAnimations';
+import { pageEnter } from '../animations/gsapAnimations';
 import { twMerge } from 'tailwind-merge';
 
 const STATUS_COLORS = {
@@ -35,6 +37,7 @@ const STATUS_COLORS = {
 };
 
 const AdminPanel = () => {
+    const { isAuthenticated, profile, loading: authLoading } = useAuth();
     const [activeTab, setActiveTab] = useState('dashboard');
     const { products, loading: productsLoading, refresh: refreshProducts } = useProducts();
     const [orders, setOrders] = useState([]);
@@ -53,12 +56,7 @@ const AdminPanel = () => {
         totalUsers: 8492 // Mocked for now
     });
 
-    useEffect(() => {
-        fetchOrders();
-        if (mainRef.current) pageEnter(mainRef.current);
-    }, []);
-
-    const fetchOrders = async () => {
+    const fetchOrders = useCallback(async () => {
         setOrdersLoading(true);
         try {
             const data = await adminService.fetchAllOrders();
@@ -71,7 +69,25 @@ const AdminPanel = () => {
         } finally {
             setOrdersLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        const loadOrders = async () => {
+            if (isAuthenticated && profile?.is_admin === true) {
+                await fetchOrders();
+                if (mainRef.current) pageEnter(mainRef.current);
+            }
+        };
+        loadOrders();
+    }, [isAuthenticated, profile, fetchOrders]);
+
+    if (authLoading) return (
+        <div className="min-h-screen bg-brandOffWhite flex items-center justify-center">
+            <div className="w-12 h-12 border-4 border-brand/20 border-t-brand rounded-full animate-spin"></div>
+        </div>
+    );
+
+    if (!isAuthenticated || profile?.is_admin !== true) return <Navigate to="/" replace />;
 
     const handleUpdateOrderStatus = async (orderId, newStatus) => {
         try {

@@ -9,6 +9,7 @@ create table public.profiles (
   full_name text,
   avatar_url text,
   phone text,
+  is_admin boolean default false,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );

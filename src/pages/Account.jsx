@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { 
   Package, 
@@ -19,7 +19,7 @@ import {
 import useCartStore from '../store/cartStore';
 import { useAuth } from '../hooks/useAuth';
 import { orderService } from '../services/orderService';
-import { pageEnter, scrollReveal } from '../animations/gsapAnimations';
+import { pageEnter } from '../animations/gsapAnimations';
 import { twMerge } from 'tailwind-merge';
 
 const STATUS_COLORS = {
@@ -53,13 +53,7 @@ const Account = () => {
     if (ref.current) pageEnter(ref.current);
   }, []);
 
-  useEffect(() => {
-    if (isAuthenticated && user?.id) {
-      fetchOrders();
-    }
-  }, [isAuthenticated, user]);
-
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     setOrdersLoading(true);
     try {
       const data = await orderService.fetchUserOrders(user.id);
@@ -69,7 +63,16 @@ const Account = () => {
     } finally {
       setOrdersLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    const loadOrders = async () => {
+      if (isAuthenticated && user?.id) {
+        await fetchOrders();
+      }
+    };
+    loadOrders();
+  }, [isAuthenticated, user, fetchOrders]);
 
   if (authLoading) return (
     <div className="min-h-screen bg-brandOffWhite flex items-center justify-center">
@@ -108,7 +111,7 @@ const Account = () => {
                <h2 className="text-xl font-display font-black text-brandCharcoal tracking-tight mb-1">{profile?.full_name || 'Pilot Unknown'}</h2>
                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6">{user?.email}</p>
                
-               {profile?.full_name === 'Admin' && (
+               {profile?.is_admin === true && (
                 <Link to="/admin" className="inline-flex items-center gap-2 bg-brandCharcoal text-white text-[9px] font-black px-5 py-2.5 rounded-xl uppercase tracking-widest hover:bg-brand transition-all shadow-lg shadow-brandCharcoal/20">
                    System Access
                 </Link>
