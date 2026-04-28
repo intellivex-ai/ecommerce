@@ -1,0 +1,3 @@
+## 2024-05-24 - Memoize derived lists to prevent GSAP stagger animation re-renders
+**Learning:** Unmemoized array calculations for derived lists (like product filtering/sorting in Shop.jsx) trigger unnecessary recalculations and redundant child component animations (specifically GSAP stagger effects in ProductGrid.jsx) on unrelated state updates, leading to performance bottlenecks and visual glitches. Also, leaving an unused `useSearchParams` hook active subscribes the component to URL changes, causing unnecessary re-renders.
+**Action:** Always wrap expensive derived lists in `useMemo` hooks and completely remove unused URL param hooks to preserve rendering performance and animation fluidity.
