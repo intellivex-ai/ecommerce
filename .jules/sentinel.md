@@ -1,0 +1,4 @@
+## 2024-05-18 - DOM-based XSS in Toast Feedback Notifications
+**Vulnerability:** The `toastFeedback` function in `src/animations/gsapAnimations.js` constructs the toast notification by concatenating user-provided inputs (`message`) and assigning them directly to the `innerHTML` of the toast element. This creates a DOM-based XSS vulnerability if an attacker can control the toast message content.
+**Learning:** Even utility files and animations can introduce security risks if they manipulate the DOM using unsafe methods like `innerHTML` with unsanitized dynamic data.
+**Prevention:** Avoid using `innerHTML` with any dynamic or potentially user-controlled input. Construct DOM elements safely using `document.createElement` and assign text using `textContent` to ensure inputs are treated as literal strings and not parsed as HTML.
