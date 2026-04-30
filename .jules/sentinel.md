@@ -1,0 +1,4 @@
+## 2025-04-30 - Fix DOM-based XSS in Toast Feedback
+**Vulnerability:** A DOM-based Cross-Site Scripting (XSS) vulnerability was found in `src/animations/gsapAnimations.js` where the `innerHTML` property was used to dynamically inject toast notification messages containing unsanitized input.
+**Learning:** Using `innerHTML` with unsanitized dynamic data exposes the application to XSS attacks, allowing malicious scripts to be executed within the context of the victim's browser.
+**Prevention:** Avoid using `innerHTML` for dynamic content. Instead, construct DOM elements safely using `document.createElement()` and assign text safely via the `textContent` property, which automatically escapes input.
