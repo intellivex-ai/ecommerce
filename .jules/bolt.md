@@ -1,0 +1,3 @@
+## 2024-05-18 - Prevented redundant child GSAP stagger effects caused by unmemoized derived state
+**Learning:** Unmemoized array calculations for derived lists (like `filtered` products) in parent components trigger unnecessary recalculations on unrelated state updates. This issue is particularly costly in this codebase because it triggers redundant child component animations (specifically the GSAP stagger effects in `ProductGrid.jsx`).
+**Action:** Always wrap expensive derived list computations in `useMemo` hooks before passing them to child components that perform GSAP animations based on prop dependencies.
