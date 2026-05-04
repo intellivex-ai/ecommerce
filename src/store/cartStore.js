@@ -40,13 +40,15 @@ const useCartStore = create((set, get) => ({
 
   addItem: async (product) => {
     const items = get().items;
-    const existing = items.find((i) => i.id === product.id);
+    // Optimization: Use findIndex for a single-pass O(N) update instead of find() + map() O(2N)
+    const existingIndex = items.findIndex((i) => i.id === product.id);
     const user = useUserStore.getState().user;
 
-    if (existing) {
-      const newItems = items.map((i) =>
-        i.id === product.id ? { ...i, qty: i.qty + 1 } : i
-      );
+    if (existingIndex !== -1) {
+      const existing = items[existingIndex];
+      const newItems = [...items];
+      newItems[existingIndex] = { ...existing, qty: existing.qty + 1 };
+
       set({ items: newItems });
 
       if (user) {
@@ -88,11 +90,15 @@ const useCartStore = create((set, get) => ({
     if (qty < 1) return get().removeItem(productId);
 
     const user = useUserStore.getState().user;
-    set({
-      items: get().items.map((i) =>
-        i.id === productId ? { ...i, qty } : i
-      ),
-    });
+    const items = get().items;
+    // Optimization: Use findIndex for a single-pass O(N) update instead of map() O(N) where only 1 item changes
+    const targetIndex = items.findIndex((i) => i.id === productId);
+
+    if (targetIndex !== -1) {
+      const newItems = [...items];
+      newItems[targetIndex] = { ...newItems[targetIndex], qty };
+      set({ items: newItems });
+    }
 
     if (user) {
       await supabase
