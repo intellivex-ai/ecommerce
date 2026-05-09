@@ -40,13 +40,14 @@ const useCartStore = create((set, get) => ({
 
   addItem: async (product) => {
     const items = get().items;
-    const existing = items.find((i) => i.id === product.id);
+    const existingIndex = items.findIndex((i) => i.id === product.id);
     const user = useUserStore.getState().user;
 
-    if (existing) {
-      const newItems = items.map((i) =>
-        i.id === product.id ? { ...i, qty: i.qty + 1 } : i
-      );
+    if (existingIndex !== -1) {
+      const existing = items[existingIndex];
+      // ⚡ Bolt: Single-pass O(N) array update via direct index assignment instead of find + map
+      const newItems = [...items];
+      newItems[existingIndex] = { ...existing, qty: existing.qty + 1 };
       set({ items: newItems });
 
       if (user) {
@@ -88,11 +89,15 @@ const useCartStore = create((set, get) => ({
     if (qty < 1) return get().removeItem(productId);
 
     const user = useUserStore.getState().user;
-    set({
-      items: get().items.map((i) =>
-        i.id === productId ? { ...i, qty } : i
-      ),
-    });
+    const items = get().items;
+    const existingIndex = items.findIndex((i) => i.id === productId);
+
+    if (existingIndex !== -1) {
+      // ⚡ Bolt: Single-pass O(N) array update via direct index assignment instead of map
+      const newItems = [...items];
+      newItems[existingIndex] = { ...newItems[existingIndex], qty };
+      set({ items: newItems });
+    }
 
     if (user) {
       await supabase
