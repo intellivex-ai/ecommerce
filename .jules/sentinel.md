@@ -1,0 +1,4 @@
+## 2024-05-24 - Cross-Site Scripting (XSS) in UI Feedback Toast
+**Vulnerability:** The `toastFeedback` function in `src/animations/gsapAnimations.js` uses `toast.innerHTML` to insert the `message` parameter directly into the DOM. This allows an attacker to execute arbitrary JavaScript if user input (e.g., from a product title or user review) is passed unescaped to the toast function.
+**Learning:** Using `innerHTML` with dynamic arguments is inherently risky, even for simple UI components like toasts. Because this function is a generic utility, it's difficult to guarantee that all future callers will sanitize their inputs before displaying feedback.
+**Prevention:** Always use safe DOM manipulation methods like `document.createElement` and `textContent` when dealing with potentially untrusted data. Avoid `innerHTML` entirely unless the input is strictly controlled and sanitized.
