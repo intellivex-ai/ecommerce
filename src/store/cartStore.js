@@ -40,19 +40,19 @@ const useCartStore = create((set, get) => ({
 
   addItem: async (product) => {
     const items = get().items;
-    const existing = items.find((i) => i.id === product.id);
+    const existingIndex = items.findIndex((i) => i.id === product.id);
     const user = useUserStore.getState().user;
 
-    if (existing) {
-      const newItems = items.map((i) =>
-        i.id === product.id ? { ...i, qty: i.qty + 1 } : i
-      );
+    if (existingIndex !== -1) {
+      // ⚡ Bolt: Single-pass O(N) update avoids find+map O(2N) array logic
+      const newItems = [...items];
+      newItems[existingIndex] = { ...newItems[existingIndex], qty: newItems[existingIndex].qty + 1 };
       set({ items: newItems });
 
       if (user) {
         await supabase
           .from('cart_items')
-          .update({ quantity: existing.qty + 1 })
+          .update({ quantity: newItems[existingIndex].qty })
           .eq('user_id', user.id)
           .eq('product_id', product.id);
       }
@@ -88,11 +88,15 @@ const useCartStore = create((set, get) => ({
     if (qty < 1) return get().removeItem(productId);
 
     const user = useUserStore.getState().user;
-    set({
-      items: get().items.map((i) =>
-        i.id === productId ? { ...i, qty } : i
-      ),
-    });
+    const items = get().items;
+    const existingIndex = items.findIndex((i) => i.id === productId);
+
+    if (existingIndex !== -1) {
+      // ⚡ Bolt: Direct index update on shallow copy avoids O(N) map logic
+      const newItems = [...items];
+      newItems[existingIndex] = { ...newItems[existingIndex], qty };
+      set({ items: newItems });
+    }
 
     if (user) {
       await supabase
@@ -149,13 +153,20 @@ const useCartStore = create((set, get) => ({
 
   toggleWishlist: async (product) => {
     const wishlist = get().wishlist;
-    const inList = wishlist.find((w) => w.id === product.id);
+    const inListIndex = wishlist.findIndex((w) => w.id === product.id);
     const user = useUserStore.getState().user;
 
-    set({ wishlist: inList ? wishlist.filter((w) => w.id !== product.id) : [...wishlist, product] });
+    // ⚡ Bolt: Single-pass O(N) avoids find+filter O(2N) logic
+    if (inListIndex !== -1) {
+      const newWishlist = [...wishlist];
+      newWishlist.splice(inListIndex, 1);
+      set({ wishlist: newWishlist });
+    } else {
+      set({ wishlist: [...wishlist, product] });
+    }
 
     if (user) {
-      if (inList) {
+      if (inListIndex !== -1) {
         await supabase
           .from('wishlist')
           .delete()
