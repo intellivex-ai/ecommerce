@@ -40,19 +40,19 @@ const useCartStore = create((set, get) => ({
 
   addItem: async (product) => {
     const items = get().items;
-    const existing = items.find((i) => i.id === product.id);
+    const existingIndex = items.findIndex((i) => i.id === product.id);
     const user = useUserStore.getState().user;
 
-    if (existing) {
-      const newItems = items.map((i) =>
-        i.id === product.id ? { ...i, qty: i.qty + 1 } : i
-      );
+    if (existingIndex >= 0) {
+      // Performance: O(N) single-pass update via findIndex
+      const newItems = [...items];
+      newItems[existingIndex] = { ...newItems[existingIndex], qty: newItems[existingIndex].qty + 1 };
       set({ items: newItems });
 
       if (user) {
         await supabase
           .from('cart_items')
-          .update({ quantity: existing.qty + 1 })
+          .update({ quantity: newItems[existingIndex].qty })
           .eq('user_id', user.id)
           .eq('product_id', product.id);
       }
@@ -88,11 +88,15 @@ const useCartStore = create((set, get) => ({
     if (qty < 1) return get().removeItem(productId);
 
     const user = useUserStore.getState().user;
-    set({
-      items: get().items.map((i) =>
-        i.id === productId ? { ...i, qty } : i
-      ),
-    });
+    const items = get().items;
+    const index = items.findIndex((i) => i.id === productId);
+
+    if (index >= 0) {
+      // Performance: O(N) single-pass update via findIndex
+      const newItems = [...items];
+      newItems[index] = { ...newItems[index], qty };
+      set({ items: newItems });
+    }
 
     if (user) {
       await supabase
@@ -149,13 +153,20 @@ const useCartStore = create((set, get) => ({
 
   toggleWishlist: async (product) => {
     const wishlist = get().wishlist;
-    const inList = wishlist.find((w) => w.id === product.id);
+    const existingIndex = wishlist.findIndex((w) => w.id === product.id);
     const user = useUserStore.getState().user;
 
-    set({ wishlist: inList ? wishlist.filter((w) => w.id !== product.id) : [...wishlist, product] });
+    if (existingIndex >= 0) {
+      // Performance: O(N) single-pass removal via findIndex
+      const newWishlist = [...wishlist];
+      newWishlist.splice(existingIndex, 1);
+      set({ wishlist: newWishlist });
+    } else {
+      set({ wishlist: [...wishlist, product] });
+    }
 
     if (user) {
-      if (inList) {
+      if (existingIndex >= 0) {
         await supabase
           .from('wishlist')
           .delete()
