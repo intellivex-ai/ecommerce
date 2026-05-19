@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Navigate } from 'react-router-dom';
 import { 
   adminService } from '../services/adminService';
+import { useAuth } from '../hooks/useAuth';
 import { useProducts } from '../hooks/useProducts';
 import { 
   LayoutDashboard, 
@@ -22,7 +24,7 @@ import {
   Image as ImageIcon,
   BarChart3
 } from 'lucide-react';
-import { pageEnter, staggerItems } from '../animations/gsapAnimations';
+import { pageEnter } from '../animations/gsapAnimations';
 import { twMerge } from 'tailwind-merge';
 
 const STATUS_COLORS = {
@@ -35,6 +37,7 @@ const STATUS_COLORS = {
 };
 
 const AdminPanel = () => {
+    const { profile, isAuthenticated, loading: authLoading } = useAuth();
     const [activeTab, setActiveTab] = useState('dashboard');
     const { products, loading: productsLoading, refresh: refreshProducts } = useProducts();
     const [orders, setOrders] = useState([]);
@@ -53,11 +56,6 @@ const AdminPanel = () => {
         totalUsers: 8492 // Mocked for now
     });
 
-    useEffect(() => {
-        fetchOrders();
-        if (mainRef.current) pageEnter(mainRef.current);
-    }, []);
-
     const fetchOrders = async () => {
         setOrdersLoading(true);
         try {
@@ -72,6 +70,16 @@ const AdminPanel = () => {
             setOrdersLoading(false);
         }
     };
+
+    useEffect(() => {
+        const init = async () => {
+            if (isAuthenticated && profile?.is_admin === true) {
+                await fetchOrders();
+            }
+        };
+        init();
+        if (mainRef.current) pageEnter(mainRef.current);
+    }, [isAuthenticated, profile]);
 
     const handleUpdateOrderStatus = async (orderId, newStatus) => {
         try {
@@ -123,6 +131,14 @@ const AdminPanel = () => {
       { id: 'inventory', label: 'Inventory', icon: Package },
       { id: 'users', label: 'Pilots', icon: Users },
     ];
+
+    if (authLoading) return (
+      <div className="min-h-screen bg-brandOffWhite flex items-center justify-center">
+          <div className="w-12 h-12 border-4 border-brand/20 border-t-brand rounded-full animate-spin"></div>
+      </div>
+    );
+
+    if (!isAuthenticated || profile?.is_admin !== true) return <Navigate to="/login" replace />;
 
     return (
         <div className="flex bg-brandOffWhite min-h-screen relative overflow-hidden">
