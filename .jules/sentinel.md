@@ -1,0 +1,4 @@
+## 2024-05-19 - Critical Authentication Bypass on Admin Endpoint
+**Vulnerability:** The `AdminPanel` component (`src/pages/Admin.jsx`) lacked client-side route protection. Unauthenticated users, or users without admin privileges, could navigate to `/admin` and execute administrative functions (e.g., viewing all orders, modifying product inventory).
+**Learning:** React Router endpoints must be explicitly protected. While backend Row Level Security (RLS) policies might prevent some unauthorized database operations, relying solely on backend checks exposes administrative UI elements, leaks business logic, and creates a broken access control vulnerability.
+**Prevention:** Always wrap sensitive client-side routes with authentication and role-based authorization checks (e.g., using a `useAuth` hook to verify `isAuthenticated` and `profile?.is_admin === true`) and implement strict redirects for unauthorized access before rendering the component.
