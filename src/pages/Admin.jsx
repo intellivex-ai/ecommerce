@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import { 
   adminService } from '../services/adminService';
 import { useProducts } from '../hooks/useProducts';
@@ -22,7 +24,7 @@ import {
   Image as ImageIcon,
   BarChart3
 } from 'lucide-react';
-import { pageEnter, staggerItems } from '../animations/gsapAnimations';
+import { pageEnter } from '../animations/gsapAnimations';
 import { twMerge } from 'tailwind-merge';
 
 const STATUS_COLORS = {
@@ -35,6 +37,8 @@ const STATUS_COLORS = {
 };
 
 const AdminPanel = () => {
+    const navigate = useNavigate();
+    const { isAuthenticated, profile, loading: authLoading } = useAuth();
     const [activeTab, setActiveTab] = useState('dashboard');
     const { products, loading: productsLoading, refresh: refreshProducts } = useProducts();
     const [orders, setOrders] = useState([]);
@@ -54,9 +58,10 @@ const AdminPanel = () => {
     });
 
     useEffect(() => {
-        fetchOrders();
-        if (mainRef.current) pageEnter(mainRef.current);
-    }, []);
+        if (!authLoading && (!isAuthenticated || profile?.is_admin !== true)) {
+            navigate('/');
+        }
+    }, [authLoading, isAuthenticated, profile, navigate]);
 
     const fetchOrders = async () => {
         setOrdersLoading(true);
@@ -72,6 +77,20 @@ const AdminPanel = () => {
             setOrdersLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (!authLoading && isAuthenticated && profile?.is_admin === true) {
+            const init = async () => {
+                await fetchOrders();
+            };
+            init();
+            if (mainRef.current) pageEnter(mainRef.current);
+        }
+    }, [authLoading, isAuthenticated, profile]);
+
+    if (authLoading || !isAuthenticated || profile?.is_admin !== true) {
+        return null;
+    }
 
     const handleUpdateOrderStatus = async (orderId, newStatus) => {
         try {
