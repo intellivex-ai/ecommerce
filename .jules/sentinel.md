@@ -1,0 +1,4 @@
+## 2024-10-24 - Authorization Bypass on Admin Route
+**Vulnerability:** The /admin frontend route lacked any authentication or authorization checks, allowing any visitor to view the admin panel.
+**Learning:** In a client-side routed React application, route-level protection must be explicitly implemented alongside backend RLS policies. The application relies on an `is_admin` boolean in the `public.profiles` table for administrative access.
+**Prevention:** All sensitive routes must verify both session validity and administrative roles (e.g., `profile?.is_admin === true`) via the `useAuth` hook before mounting the component.
