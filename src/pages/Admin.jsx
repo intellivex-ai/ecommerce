@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Navigate } from 'react-router-dom';
 import { 
   adminService } from '../services/adminService';
 import { useProducts } from '../hooks/useProducts';
+import { useAuth } from '../hooks/useAuth';
 import { 
   LayoutDashboard, 
   Package, 
@@ -22,7 +24,7 @@ import {
   Image as ImageIcon,
   BarChart3
 } from 'lucide-react';
-import { pageEnter, staggerItems } from '../animations/gsapAnimations';
+import { pageEnter } from '../animations/gsapAnimations';
 import { twMerge } from 'tailwind-merge';
 
 const STATUS_COLORS = {
@@ -35,6 +37,7 @@ const STATUS_COLORS = {
 };
 
 const AdminPanel = () => {
+    const { isAuthenticated, profile, loading: authLoading } = useAuth();
     const [activeTab, setActiveTab] = useState('dashboard');
     const { products, loading: productsLoading, refresh: refreshProducts } = useProducts();
     const [orders, setOrders] = useState([]);
@@ -53,25 +56,50 @@ const AdminPanel = () => {
         totalUsers: 8492 // Mocked for now
     });
 
-    useEffect(() => {
-        fetchOrders();
-        if (mainRef.current) pageEnter(mainRef.current);
-    }, []);
-
     const fetchOrders = async () => {
         setOrdersLoading(true);
         try {
             const data = await adminService.fetchAllOrders();
-            setOrders(data || []);
-
-            const rev = (data || []).reduce((acc, order) => acc + Number(order.total_price || 0), 0);
-            setStats(prev => ({ ...prev, revenue: rev, totalOrders: data?.length || 0 }));
-        } catch (err) {
-            console.error('Failed to load orders', err);
+            // Mocking some orders since DB might be empty
+            if (!data || data.length === 0) {
+                const mockedData = [
+                    { id: 'ORD-8492-X', user_email: 'pilot@velocity.io', total_amount: 345.00, status: 'processing', created_at: new Date().toISOString() },
+                    { id: 'ORD-8493-Y', user_email: 'racer@velocity.io', total_amount: 189.50, status: 'shipped', created_at: new Date(Date.now() - 86400000).toISOString() },
+                ];
+                setOrders(mockedData);
+                const rev = mockedData.reduce((acc, order) => acc + Number(order.total_amount || 0), 0);
+                setStats(prev => ({ ...prev, revenue: rev, totalOrders: mockedData.length }));
+            } else {
+                setOrders(data);
+                const rev = (data || []).reduce((acc, order) => acc + Number(order.total_amount || 0), 0);
+                setStats(prev => ({ ...prev, revenue: rev, totalOrders: data?.length || 0 }));
+            }
+        } catch (error) {
+            console.error('Failed to fetch orders:', error);
         } finally {
             setOrdersLoading(false);
         }
     };
+
+    useEffect(() => {
+        const load = async () => {
+             await fetchOrders();
+        };
+        load();
+        if (mainRef.current) pageEnter(mainRef.current);
+    }, []);
+
+    if (authLoading) {
+        return (
+            <div className="min-h-screen bg-brandOffWhite flex items-center justify-center">
+                <div className="w-12 h-12 border-4 border-brand/20 border-t-brand rounded-full animate-spin" />
+            </div>
+        );
+    }
+
+    if (!isAuthenticated || !profile?.is_admin) {
+        return <Navigate to="/login" replace />;
+    }
 
     const handleUpdateOrderStatus = async (orderId, newStatus) => {
         try {
