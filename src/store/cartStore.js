@@ -40,19 +40,20 @@ const useCartStore = create((set, get) => ({
 
   addItem: async (product) => {
     const items = get().items;
-    const existing = items.find((i) => i.id === product.id);
+
+    // Performance Optimization: Use a single O(N) pass instead of O(2N) find() + map()
+    const index = items.findIndex((i) => i.id === product.id);
     const user = useUserStore.getState().user;
 
-    if (existing) {
-      const newItems = items.map((i) =>
-        i.id === product.id ? { ...i, qty: i.qty + 1 } : i
-      );
+    if (index !== -1) {
+      const newItems = [...items];
+      newItems[index] = { ...newItems[index], qty: newItems[index].qty + 1 };
       set({ items: newItems });
 
       if (user) {
         await supabase
           .from('cart_items')
-          .update({ quantity: existing.qty + 1 })
+          .update({ quantity: newItems[index].qty })
           .eq('user_id', user.id)
           .eq('product_id', product.id);
       }
