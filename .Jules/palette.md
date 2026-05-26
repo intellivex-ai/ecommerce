@@ -1,0 +1,3 @@
+## 2026-05-26 - Added ARIA labels to icon-only buttons
+**Learning:** Found multiple instances of buttons and links in the Navbar and Footer containing only icons without aria-labels. This makes the interface inaccessible to screen reader users as they won't know the purpose of these interactive elements.
+**Action:** When adding icon-only interactive elements (buttons, links), always ensure an aria-label is provided and apply aria-hidden="true" to the SVG icon itself if needed, or rely on the parent's aria-label. Also, for dynamic indicators like a cart count, incorporate the dynamic value directly into the parent button's aria-label.
