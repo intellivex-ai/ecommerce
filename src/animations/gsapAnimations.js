@@ -192,9 +192,14 @@ export const toastFeedback = (message, type = 'success') => {
   const icon = type === 'success' ? '✓' : '!';
   toast.innerHTML = `
     <span class="w-5 h-5 rounded-full bg-brand text-white flex items-center justify-center text-[10px] font-black">${icon}</span>
-    <span class="text-white text-xs font-bold uppercase tracking-widest">${message}</span>
   `;
   
+  // Security: Set message using textContent to prevent XSS
+  const messageSpan = document.createElement('span');
+  messageSpan.className = "text-white text-xs font-bold uppercase tracking-widest";
+  messageSpan.textContent = message;
+  toast.appendChild(messageSpan);
+
   document.body.appendChild(toast);
   
   gsap.fromTo(toast, 
