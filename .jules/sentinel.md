@@ -1,0 +1,4 @@
+## 2025-05-30 - Fix DOM-based XSS in GSAP Animations Toast Feedback
+**Vulnerability:** A DOM-based XSS vulnerability was identified in `src/animations/gsapAnimations.js` inside the `toastFeedback` function where user/system input (`message` and `icon`) was directly injected into the DOM using `toast.innerHTML = \`...\``.
+**Learning:** This existed because `innerHTML` was used as a shortcut to quickly assemble HTML strings for temporary UI elements (toasts) without sanitizing the input data. This could allow execution of malicious scripts if unsanitized user-controlled input were passed into `message`.
+**Prevention:** Avoid `innerHTML` entirely when constructing dynamic UI elements. Instead, use standard DOM manipulation methods like `document.createElement`, setting properties with `className`, and securely injecting text using `textContent`, which intrinsically escapes any HTML tags, ensuring input is treated purely as string data rather than executable code.
