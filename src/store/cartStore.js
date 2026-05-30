@@ -40,19 +40,20 @@ const useCartStore = create((set, get) => ({
 
   addItem: async (product) => {
     const items = get().items;
-    const existing = items.find((i) => i.id === product.id);
+    const existingIndex = items.findIndex((i) => i.id === product.id);
     const user = useUserStore.getState().user;
 
-    if (existing) {
-      const newItems = items.map((i) =>
-        i.id === product.id ? { ...i, qty: i.qty + 1 } : i
-      );
+    if (existingIndex !== -1) {
+      // ⚡ Bolt Performance optimization: Avoid O(2N) find+map, use O(N) findIndex + direct update on shallow copy
+      const newItems = [...items];
+      newItems[existingIndex] = { ...newItems[existingIndex], qty: newItems[existingIndex].qty + 1 };
+
       set({ items: newItems });
 
       if (user) {
         await supabase
           .from('cart_items')
-          .update({ quantity: existing.qty + 1 })
+          .update({ quantity: newItems[existingIndex].qty })
           .eq('user_id', user.id)
           .eq('product_id', product.id);
       }
