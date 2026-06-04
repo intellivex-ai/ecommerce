@@ -1,0 +1,3 @@
+## 2025-03-09 - Accessible Hover Overlays
+**Learning:** Elements hidden behind `group-hover:opacity-0` become inaccessible to keyboard users unless explicitly managed. The `group-hover` pattern is prevalent in ProductCards but traps keyboard focus invisibly.
+**Action:** Always pair `group-hover:opacity-100` with `focus-within:opacity-100` on parent overlay containers and add `focus-visible` classes to the interactive children to ensure they remain accessible and visible during keyboard navigation.
