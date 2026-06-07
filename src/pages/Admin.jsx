@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import { 
   adminService } from '../services/adminService';
 import { useProducts } from '../hooks/useProducts';
@@ -35,6 +37,7 @@ const STATUS_COLORS = {
 };
 
 const AdminPanel = () => {
+    const { isAuthenticated, profile, loading: authLoading } = useAuth();
     const [activeTab, setActiveTab] = useState('dashboard');
     const { products, loading: productsLoading, refresh: refreshProducts } = useProducts();
     const [orders, setOrders] = useState([]);
@@ -115,6 +118,16 @@ const AdminPanel = () => {
             setIsSubmitting(false);
         }
     };
+
+    if (authLoading) return (
+        <div className="min-h-screen bg-brandOffWhite flex items-center justify-center">
+            <div className="w-12 h-12 border-4 border-brand/20 border-t-brand rounded-full animate-spin"></div>
+        </div>
+    );
+
+    if (!isAuthenticated || profile?.full_name !== 'Admin') {
+        return <Navigate to="/" replace />;
+    }
 
     const NAV_ITEMS = [
       { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
