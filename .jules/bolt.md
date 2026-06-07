@@ -1,0 +1,3 @@
+## 2024-05-24 - Prevent GSAP Animation Re-triggers
+**Learning:** Passing unmemoized derived arrays (like `filtered` or `featured` products) from parent components (e.g., `Shop.jsx`, `Home.jsx`) down to animation-heavy components (`ProductGrid.jsx`) causes O(N log N) recalculations and unintended re-triggers of GSAP layout animations (like `staggerItems`) on unrelated state changes.
+**Action:** Always wrap derived collections passed to animation-heavy components with `useMemo` to preserve array reference equality unless dependencies actually change.
