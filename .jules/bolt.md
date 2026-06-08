@@ -1,0 +1,3 @@
+## 2024-05-24 - Unmemoized Derived State Triggering GSAP Layout Animations
+**Learning:** Passing unmemoized derived collections (like a `filtered` array) to child components that depend on reference equality for `useEffect` triggers causes major performance issues. In this codebase, `ProductGrid` triggers expensive GSAP `staggerItems` animations whenever the `products` array reference changes. In `Shop.jsx`, unrelated state updates (like changing a color selection) caused `filtered` to be re-evaluated, generating a new array reference and unnecessarily re-triggering the animations.
+**Action:** Always memoize derived arrays passed to animation-heavy components using `useMemo` to preserve reference equality and prevent O(N log N) recalculations and DOM layout thrashing.
