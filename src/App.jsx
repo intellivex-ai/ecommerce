@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useAuth } from './hooks/useAuth';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Home from './pages/Home';
@@ -39,6 +40,18 @@ const Layout = ({ children }) => {
     );
 };
 
+const AdminRoute = ({ children }) => {
+    const { profile, loading, isAuthenticated } = useAuth();
+
+    if (loading) return null; // Or a loading spinner
+
+    if (!isAuthenticated || profile?.full_name !== 'Admin') {
+        return <Navigate to="/" replace />;
+    }
+
+    return children;
+};
+
 const AppRoutes = () => (
     <PageTransition>{(location) => (
             <>
@@ -51,7 +64,7 @@ const AppRoutes = () => (
                         <Route path="/cart" element={<Cart />} />
                         <Route path="/checkout" element={<Checkout />} />
                         <Route path="/account" element={<Account />} />
-                        <Route path="/admin" element={<AdminPanel />} />
+                        <Route path="/admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                     </Routes>
