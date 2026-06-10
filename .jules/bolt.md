@@ -1,0 +1,3 @@
+## 2024-06-10 - Memoizing derived arrays for GSAP animations
+**Learning:** Passing unmemoized derived arrays (like filtered products) from parent components to child components triggers `useEffect` hooks relying on object referential equality. In this codebase, it caused O(N log N) recalculations and unintentionally re-triggered layout animations (`staggerItems` in GSAP) on unrelated state changes.
+**Action:** Always memoize derived collections passed to animation-heavy components using `useMemo` to maintain referential identity and prevent unnecessary animation re-triggers.
