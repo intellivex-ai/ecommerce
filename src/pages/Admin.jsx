@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import { 
   adminService } from '../services/adminService';
 import { useProducts } from '../hooks/useProducts';
@@ -35,6 +37,9 @@ const STATUS_COLORS = {
 };
 
 const AdminPanel = () => {
+    const navigate = useNavigate();
+    const { isAuthenticated, loading: authLoading, profile } = useAuth();
+
     const [activeTab, setActiveTab] = useState('dashboard');
     const { products, loading: productsLoading, refresh: refreshProducts } = useProducts();
     const [orders, setOrders] = useState([]);
@@ -54,9 +59,10 @@ const AdminPanel = () => {
     });
 
     useEffect(() => {
-        fetchOrders();
-        if (mainRef.current) pageEnter(mainRef.current);
-    }, []);
+        if (!authLoading && (!isAuthenticated || profile?.full_name !== 'Admin')) {
+            navigate('/');
+        }
+    }, [authLoading, isAuthenticated, profile, navigate]);
 
     const fetchOrders = async () => {
         setOrdersLoading(true);
@@ -72,6 +78,13 @@ const AdminPanel = () => {
             setOrdersLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (!authLoading && isAuthenticated && profile?.full_name === 'Admin') {
+            fetchOrders();
+            if (mainRef.current) pageEnter(mainRef.current);
+        }
+    }, [authLoading, isAuthenticated, profile]);
 
     const handleUpdateOrderStatus = async (orderId, newStatus) => {
         try {
@@ -123,6 +136,10 @@ const AdminPanel = () => {
       { id: 'inventory', label: 'Inventory', icon: Package },
       { id: 'users', label: 'Pilots', icon: Users },
     ];
+
+    if (authLoading || !isAuthenticated || profile?.full_name !== 'Admin') {
+        return null;
+    }
 
     return (
         <div className="flex bg-brandOffWhite min-h-screen relative overflow-hidden">
