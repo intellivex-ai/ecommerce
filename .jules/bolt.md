@@ -1,0 +1,3 @@
+## 2024-06-11 - GSAP Animation Triggering from Unmemoized Arrays
+**Learning:** Passing unmemoized derived arrays (e.g., filtered products) from parent components to child components that trigger GSAP layout animations (like `staggerItems`) causes O(N log N) recalculations and re-triggers animations on unrelated state changes due to array reference changes.
+**Action:** Always memoize derived collections passed to animation-heavy components using `useMemo` to maintain referential equality.
