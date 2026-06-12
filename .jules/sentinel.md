@@ -1,0 +1,4 @@
+## 2024-06-12 - Missing Admin Route Authorization
+**Vulnerability:** The `/admin` route and `AdminPanel` component lacked any authentication or authorization checks, allowing any user (even unauthenticated ones) to access the admin dashboard.
+**Learning:** Frontend routing in React requires explicit guard components or hook-based redirects (e.g., checking `isAuthenticated` and `profile.full_name === 'Admin'`) on sensitive pages, as React Router does not enforce route-level protection by default.
+**Prevention:** Always implement a role-based access control (RBAC) wrapper or use custom auth hooks (`useAuth`) at the top of admin/sensitive components, and ensure backend APIs also enforce RLS (Row Level Security) as defense in depth.
