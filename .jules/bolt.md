@@ -1,0 +1,3 @@
+## 2024-05-24 - Unmemoized arrays trigger unnecessary GSAP animations
+**Learning:** Passing unmemoized derived arrays (like filtered products) from parent components to `ProductGrid` causes O(N log N) recalculations and unexpectedly re-triggers GSAP layout animations on unrelated state changes because the animation hooks depend on referential equality of the products array.
+**Action:** Always memoize derived collections (using `useMemo`) passed to animation-heavy components to maintain referential equality and avoid unnecessary recalculations and re-renders.
