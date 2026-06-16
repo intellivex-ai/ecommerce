@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import HeroSection from '../components/HeroSection';
 import ProductGrid from '../components/ProductGrid';
@@ -20,7 +20,8 @@ const Home = () => {
     pageEnter(ref.current);
   }, []);
 
-  const featured = products.slice(0, 4);
+  /* ⚡ Bolt Performance: Memoize the derived featured array to prevent unnecessarily re-triggering the GSAP layout animations inside ProductGrid on unrelated state changes. */
+  const featured = useMemo(() => products.slice(0, 4), [products]);
 
   return (
     <div ref={ref} className="bg-brandOffWhite noise mesh-gradient">
