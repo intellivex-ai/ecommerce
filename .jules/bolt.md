@@ -1,0 +1,3 @@
+## 2024-05-24 - Unmemoized arrays trigger GSAP layout animations
+**Learning:** Passing unmemoized derived collections (like `filtered` products) to animation-heavy components like `ProductGrid.jsx` triggers GSAP `staggerItems` layout animations on every render. Because the dependency array detects a new array reference, it causes layout thrashing and unnecessary O(N log N) recalculations when unrelated component state changes.
+**Action:** Always wrap derived collections passed to animation-heavy components with `useMemo` to prevent unnecessary DOM animations and recalculations.
