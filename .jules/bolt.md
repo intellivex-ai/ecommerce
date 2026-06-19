@@ -1,0 +1,3 @@
+## 2024-10-24 - GSAP Animation Layout Triggers
+**Learning:** In this architecture, GSAP animations (like `staggerItems` in `ProductGrid.jsx`) rely on the `[products]` dependency array. Passing unmemoized derived arrays (like `filtered` products) from parent components causes O(N log N) recalculations and inadvertently re-triggers expensive layout animations on completely unrelated state changes (like toggling mobile filters or colorways).
+**Action:** Always memoize derived collections passed to animation-heavy components using `useMemo` to preserve referential equality and prevent unintended animation triggers.
