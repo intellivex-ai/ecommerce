@@ -1,0 +1,3 @@
+## 2024-05-24 - Memoize Derived Animation Dependencies
+**Learning:** In this architecture, GSAP animations (`staggerItems` in `ProductGrid.jsx`) trigger based on the `[products]` dependency array reference. Passing unmemoized derived arrays (like `filtered` in `Shop.jsx`) from parent components not only causes O(N log N) recalculations on every render but also incorrectly re-triggers layout animations on unrelated state changes.
+**Action:** Always wrap derived collections passed to animation-heavy components with `useMemo` to maintain referential equality and avoid expensive re-renders and animation thrashing.
