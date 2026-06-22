@@ -1,0 +1,4 @@
+## 2024-06-22 - Missing Authorization on Admin Route
+**Vulnerability:** The client-side admin route (`/admin`) was completely unprotected, allowing any user (authenticated or not) to access the admin panel and potentially modify gear lab or mission log data.
+**Learning:** In React applications relying on client-side routing, components like `AdminPanel` must enforce their own route guards (e.g., using a `useAuth` hook and `<Navigate>`) because centralized layout wrappers might not prevent component mounting.
+**Prevention:** Always implement explicit authorization checks (e.g., `user?.email === 'admin@velocity.io'`) directly within administrative components, accompanied by a fallback return (like `<Navigate to="/" replace />`) before any sensitive data fetching or rendering occurs.
