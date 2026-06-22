@@ -1,0 +1,3 @@
+## 2024-10-24 - Unmemoized Arrays Triggering Animations
+**Learning:** Passing unmemoized derived arrays (like filtered collections) to child components that use GSAP animations triggered by dependency arrays (e.g., `useEffect(..., [products])`) causes performance bottlenecks. It inadvertently re-triggers expensive layout animations on completely unrelated state changes (like toggling a mobile menu overlay).
+**Action:** Always memoize derived collections passed to animation-heavy components using `useMemo` to preserve array references across re-renders when the source data and dependencies haven't changed.
