@@ -47,7 +47,8 @@ const QuickView = ({ product, onClose }) => {
       >
         <button 
           onClick={onClose}
-          className="absolute top-6 right-6 z-20 p-2 rounded-full glass-dark text-white hover:bg-brand transition-colors"
+          aria-label="Close modal"
+          className="absolute top-6 right-6 z-20 p-2 rounded-full glass-dark text-white hover:bg-brand transition-colors focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
         >
           <X className="w-5 h-5" />
         </button>
@@ -110,7 +111,8 @@ const QuickView = ({ product, onClose }) => {
             </button>
             <button 
               onClick={() => { toggleWishlist(product); toastFeedback(isWishlisted ? 'Removed from vault' : 'Added to vault'); }}
-              className={`flex-1 flex items-center justify-center rounded-2xl border transition-all ${
+              aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+              className={`flex-1 flex items-center justify-center rounded-2xl border transition-all focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none ${
                 isWishlisted ? 'bg-red-50 border-red-100 text-red-500' : 'bg-white border-slate-200 text-brandCharcoal hover:bg-slate-50'
               }`}
             >
