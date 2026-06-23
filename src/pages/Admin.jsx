@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Navigate } from 'react-router-dom';
 import { 
   adminService } from '../services/adminService';
 import { useProducts } from '../hooks/useProducts';
+import { useAuth } from '../hooks/useAuth';
 import { 
   LayoutDashboard, 
   Package, 
@@ -40,6 +42,7 @@ const AdminPanel = () => {
     const [orders, setOrders] = useState([]);
     const [ordersLoading, setOrdersLoading] = useState(true);
     const mainRef = useRef(null);
+    const { user, loading: authLoading } = useAuth();
 
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -57,6 +60,10 @@ const AdminPanel = () => {
         fetchOrders();
         if (mainRef.current) pageEnter(mainRef.current);
     }, []);
+
+    // Sentinel Security Update: Restrict access to admin panel to authorized email only
+    if (authLoading) return null;
+    if (user?.email !== 'admin@velocity.io') return <Navigate to="/" replace />;
 
     const fetchOrders = async () => {
         setOrdersLoading(true);
