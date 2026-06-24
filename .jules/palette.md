@@ -1,0 +1,3 @@
+## 2024-06-24 - Invisible Focus Trap in Product Cards
+**Learning:** Elements visually hidden with `group-hover:opacity-0` (like product action overlays) remain in the tab order, creating an "invisible focus" trap for keyboard users.
+**Action:** Always pair `group-hover` visibility toggles with `focus-within` on the container and `focus-visible` on the interactive children to ensure proper keyboard accessibility.
