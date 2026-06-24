@@ -1,0 +1,4 @@
+## 2024-05-24 - Missing Client-Side Authorization Guard on Admin Route
+**Vulnerability:** The `/admin` route lacks a component-level route guard, allowing any authenticated or unauthenticated user to access the `AdminPanel` component, potentially viewing sensitive data.
+**Learning:** Client-side routing configurations without explicit guards on sensitive components lead to authorization bypass. Even if API calls fail, the UI structure is exposed.
+**Prevention:** Always implement role-based access control (RBAC) component-level guards using `<Navigate>` for administrative routes. Ensure early returns are strictly placed after all React hook declarations to comply with the Rules of Hooks.
