@@ -1,0 +1,4 @@
+## 2023-10-25 - Missing Component-Level Admin Authorization
+**Vulnerability:** The `/admin` route lacked authentication and authorization checks entirely, allowing unauthenticated users to access the `AdminPanel` component and potentially execute administrative actions.
+**Learning:** This codebase relies on component-level route guards (using `useAuth` and `<Navigate>`) instead of centralizing access control in the router (`App.jsx`). This distributed approach makes it easy to accidentally expose new sensitive pages.
+**Prevention:** When creating new sensitive or administrative views, always verify that the appropriate `useAuth` hook and role checks (e.g., `user?.email === 'admin@velocity.io'`) are implemented within the component itself before returning the UI.
