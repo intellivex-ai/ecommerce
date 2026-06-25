@@ -1,0 +1,3 @@
+## 2024-05-24 - Interactive Overlays Invisible Focus Trap
+**Learning:** Elements visually hidden using `group-hover:opacity-0` (e.g., interactive overlays on Product Cards) remain focusable via keyboard, creating an 'invisible focus' accessibility trap where users tab to invisible controls.
+**Action:** Always add `focus-within:translate-y-0 focus-within:opacity-100` to the parent container and `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:opacity-100` styles to the interactive children to ensure proper keyboard accessibility.
