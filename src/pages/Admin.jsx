@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import { 
   adminService } from '../services/adminService';
 import { useProducts } from '../hooks/useProducts';
@@ -35,6 +37,7 @@ const STATUS_COLORS = {
 };
 
 const AdminPanel = () => {
+    const { user, loading: authLoading } = useAuth();
     const [activeTab, setActiveTab] = useState('dashboard');
     const { products, loading: productsLoading, refresh: refreshProducts } = useProducts();
     const [orders, setOrders] = useState([]);
@@ -53,11 +56,6 @@ const AdminPanel = () => {
         totalUsers: 8492 // Mocked for now
     });
 
-    useEffect(() => {
-        fetchOrders();
-        if (mainRef.current) pageEnter(mainRef.current);
-    }, []);
-
     const fetchOrders = async () => {
         setOrdersLoading(true);
         try {
@@ -72,6 +70,15 @@ const AdminPanel = () => {
             setOrdersLoading(false);
         }
     };
+
+    useEffect(() => {
+        fetchOrders();
+        if (mainRef.current) pageEnter(mainRef.current);
+    }, []);
+
+    // Sentinel Security Update: Restrict access to authorized admin emails only.
+    if (authLoading) return null;
+    if (user?.email !== 'admin@velocity.io') return <Navigate to="/login" replace />;
 
     const handleUpdateOrderStatus = async (orderId, newStatus) => {
         try {
