@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import { 
   adminService } from '../services/adminService';
 import { useProducts } from '../hooks/useProducts';
@@ -37,6 +39,7 @@ const STATUS_COLORS = {
 const AdminPanel = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
     const { products, loading: productsLoading, refresh: refreshProducts } = useProducts();
+    const { user, isAuthenticated, loading: authLoading } = useAuth();
     const [orders, setOrders] = useState([]);
     const [ordersLoading, setOrdersLoading] = useState(true);
     const mainRef = useRef(null);
@@ -53,11 +56,6 @@ const AdminPanel = () => {
         totalUsers: 8492 // Mocked for now
     });
 
-    useEffect(() => {
-        fetchOrders();
-        if (mainRef.current) pageEnter(mainRef.current);
-    }, []);
-
     const fetchOrders = async () => {
         setOrdersLoading(true);
         try {
@@ -72,6 +70,29 @@ const AdminPanel = () => {
             setOrdersLoading(false);
         }
     };
+
+    useEffect(() => {
+        const initData = async () => {
+            if (isAuthenticated && user?.email === 'admin@velocity.io') {
+                await fetchOrders();
+            }
+        };
+        initData();
+        if (mainRef.current) pageEnter(mainRef.current);
+    }, [isAuthenticated, user]);
+
+    // Sentinel Security Update: Restrict access to administrative interface to authorized personnel only.
+    if (authLoading) {
+        return (
+            <div className="min-h-screen bg-brandOffWhite flex items-center justify-center">
+                <div className="w-12 h-12 border-4 border-brand/20 border-t-brand rounded-full animate-spin"></div>
+            </div>
+        );
+    }
+
+    if (!isAuthenticated || user?.email !== 'admin@velocity.io') {
+        return <Navigate to="/" replace />;
+    }
 
     const handleUpdateOrderStatus = async (orderId, newStatus) => {
         try {

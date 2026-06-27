@@ -1,0 +1,4 @@
+## 2025-02-23 - Missing Administrative Authorization Guard
+**Vulnerability:** The client-side administrative route (`/admin`) lacked proper route guarding. Although `App.jsx` handles routing, it did not enforce authorization, allowing any user to access the Admin interface and potentially trigger admin service calls.
+**Learning:** React component-level route guards using the `useAuth` hook and `<Navigate>` are required for sensitive routes in this architecture. Checking `user?.email === 'admin@velocity.io'` is the current method, but relying solely on UI-level hiding without route guards creates an insecure direct object reference (IDOR) and unauthorized access risk on the client side.
+**Prevention:** Always implement explicit component-level route guards with authentication and authorization checks (e.g., using `useAuth` and `<Navigate>`) on all administrative or sensitive client-side views before rendering the component tree.
