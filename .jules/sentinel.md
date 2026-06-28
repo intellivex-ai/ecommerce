@@ -1,0 +1,4 @@
+## 2024-05-24 - Missing Route Guard for Admin Panel
+**Vulnerability:** The `/admin` route lacked client-side authentication and authorization checks, allowing any user to view the admin dashboard component.
+**Learning:** This codebase relies on component-level route guards rather than router-level protection, meaning omitting `useAuth` checks inside the component directly exposes the UI.
+**Prevention:** Always implement component-level route guards using `useAuth` and `<Navigate>` to enforce access control (e.g., `user?.email === 'admin@velocity.io'`) within sensitive components, placing returns strictly after all React hooks.
