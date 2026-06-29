@@ -1,0 +1,3 @@
+## 2024-05-15 - Unmemoized Arrays Trigger GSAP Re-animations
+**Learning:** Passing unmemoized derived arrays (like filtered products) to animation-heavy components like `ProductGrid.jsx` triggers its internal `useEffect` that runs `staggerItems` GSAP animation on every parent render. This not only causes O(N log N) recalculations but re-triggers expensive layout animations on completely unrelated state changes (like toggling a modal).
+**Action:** Always memoize derived collections passed to animation-heavy components using `useMemo`.
