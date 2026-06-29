@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  adminService } from '../services/adminService';
+import { Navigate } from 'react-router-dom';
+import { adminService } from '../services/adminService';
 import { useProducts } from '../hooks/useProducts';
+import { useAuth } from '../hooks/useAuth';
 import { 
   LayoutDashboard, 
   Package, 
@@ -53,10 +54,18 @@ const AdminPanel = () => {
         totalUsers: 8492 // Mocked for now
     });
 
+    const { user, loading: authLoading } = useAuth();
+
     useEffect(() => {
         fetchOrders();
         if (mainRef.current) pageEnter(mainRef.current);
     }, []);
+
+    // Sentinel Security Update: Restrict access to admin route by verifying user authentication and admin email.
+    if (authLoading) return null;
+    if (!user || user.email !== 'admin@velocity.io') {
+        return <Navigate to="/login" replace />;
+    }
 
     const fetchOrders = async () => {
         setOrdersLoading(true);
