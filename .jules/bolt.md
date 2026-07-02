@@ -1,0 +1,3 @@
+## 2024-05-24 - GSAP Animation Dependency on Array References
+**Learning:** GSAP animations in `ProductGrid.jsx` (like `staggerItems`) are triggered by the `[products]` dependency array. Passing unmemoized derived arrays (e.g., filtered products in `Shop.jsx`) re-triggers these layout animations on unrelated state changes, causing O(N log N) recalculations and performance hits.
+**Action:** Always memoize derived collections passed to animation-heavy components using `useMemo` to maintain referential equality across unrelated renders.
