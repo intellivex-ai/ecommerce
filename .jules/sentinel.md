@@ -1,0 +1,4 @@
+## 2025-03-05 - Route Protection Architecture
+**Vulnerability:** The Admin panel (`/admin`) lacked client-side authorization and authentication, rendering it accessible without logging in.
+**Learning:** Client-side administrative routes require component-level route guards utilizing `useAuth` and `<Navigate>` to enforce strict access control. Placing early returns inside React components requires careful attention to hook rules—they must strictly follow all React hook declarations (`useState`, `useEffect`) and block-scoped functions referenced within hooks, avoiding the Temporal Dead Zone.
+**Prevention:** Always secure sensitive endpoints explicitly at the component level, ensuring access controls are the final declarations before returning UI logic.
