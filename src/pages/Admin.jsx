@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Navigate } from 'react-router-dom';
 import { 
   adminService } from '../services/adminService';
 import { useProducts } from '../hooks/useProducts';
+import { useAuth } from '../hooks/useAuth';
 import { 
   LayoutDashboard, 
   Package, 
@@ -35,6 +37,7 @@ const STATUS_COLORS = {
 };
 
 const AdminPanel = () => {
+    const { user, loading: authLoading } = useAuth();
     const [activeTab, setActiveTab] = useState('dashboard');
     const { products, loading: productsLoading, refresh: refreshProducts } = useProducts();
     const [orders, setOrders] = useState([]);
@@ -123,6 +126,19 @@ const AdminPanel = () => {
       { id: 'inventory', label: 'Inventory', icon: Package },
       { id: 'users', label: 'Pilots', icon: Users },
     ];
+
+    // Sentinel Security Update: Restrict access to admin panel
+    if (authLoading || productsLoading || ordersLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-brandOffWhite">
+                <div className="w-8 h-8 border-4 border-brand border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        );
+    }
+
+    if (!user || user.email !== 'admin@velocity.io') {
+        return <Navigate to="/login" replace />;
+    }
 
     return (
         <div className="flex bg-brandOffWhite min-h-screen relative overflow-hidden">
