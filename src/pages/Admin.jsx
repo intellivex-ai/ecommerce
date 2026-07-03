@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import { 
   adminService } from '../services/adminService';
 import { useProducts } from '../hooks/useProducts';
@@ -52,6 +54,8 @@ const AdminPanel = () => {
         totalOrders: 0,
         totalUsers: 8492 // Mocked for now
     });
+
+    const { user, loading: authLoading } = useAuth();
 
     useEffect(() => {
         fetchOrders();
@@ -123,6 +127,10 @@ const AdminPanel = () => {
       { id: 'inventory', label: 'Inventory', icon: Package },
       { id: 'users', label: 'Pilots', icon: Users },
     ];
+
+    // Sentinel Security Update: Restrict access to admin dashboard and prevent unauthorized viewing
+    if (authLoading) return <div className="flex justify-center py-20"><div className="w-10 h-10 border-4 border-brand/20 border-t-brand rounded-full animate-spin"></div></div>;
+    if (!user || user.email !== 'admin@velocity.io') return <Navigate to="/" replace />;
 
     return (
         <div className="flex bg-brandOffWhite min-h-screen relative overflow-hidden">
