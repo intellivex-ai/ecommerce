@@ -73,7 +73,8 @@ const Navbar = () => {
                     <div className="flex items-center gap-2 lg:hidden">
                         <button 
                             onClick={() => setIsMenuOpen(true)}
-                            className="p-2 hover:bg-black/5 rounded-full transition-colors"
+                            aria-label="Open menu"
+                            className="p-2 hover:bg-black/5 rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
                         >
                             <Menu className="w-6 h-6 text-brandCharcoal" strokeWidth={1.5} />
                         </button>
@@ -107,19 +108,25 @@ const Navbar = () => {
                     <div className="flex items-center gap-1 sm:gap-3">
                         <button 
                             onClick={() => setIsSearchOpen(true)}
-                            className="p-2 sm:p-2.5 hover:bg-black/5 rounded-full transition-colors group relative"
+                            aria-label="Open search"
+                            className="p-2 sm:p-2.5 hover:bg-black/5 rounded-full transition-colors group relative focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
                         >
                             <Search className="w-5 h-5 text-brandCharcoal group-hover:text-brand transition-colors" strokeWidth={1.5} />
                             <span className="hidden xl:inline-flex absolute left-full ml-4 top-1/2 -translate-y-1/2 items-center gap-1 px-2 py-1 bg-brandOffWhite border border-brandCharcoal/5 rounded-lg text-[9px] font-black text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
                               <span className="text-[7px]">CTRL</span> K
                             </span>
                         </button>
-                        <Link to="/account" className="p-2 sm:p-2.5 hover:bg-black/5 rounded-full transition-colors hidden sm:flex group">
+                        <Link
+                            to="/account"
+                            aria-label="My account"
+                            className="p-2 sm:p-2.5 hover:bg-black/5 rounded-full transition-colors hidden sm:flex group focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+                        >
                             <User className="w-5 h-5 text-brandCharcoal group-hover:text-brand transition-colors" strokeWidth={1.5} />
                         </Link>
                         <button
                             onClick={handleCartClick}
-                            className="p-2 sm:p-2.5 hover:bg-black/5 rounded-full transition-colors relative group"
+                            aria-label="Open cart"
+                            className="p-2 sm:p-2.5 hover:bg-black/5 rounded-full transition-colors relative group focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
                         >
                             <ShoppingBag className="w-5 h-5 text-brandCharcoal group-hover:text-brand transition-colors" strokeWidth={1.5} />
                             {cartCount > 0 && (
@@ -165,7 +172,11 @@ const Navbar = () => {
                         <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-2xl font-black tracking-tighter text-brandCharcoal">
                             VELOCITY<span className="text-brand">.</span>
                         </Link>
-                        <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-black/5 rounded-full transition-colors">
+                        <button
+                            onClick={() => setIsMenuOpen(false)}
+                            aria-label="Close menu"
+                            className="p-2 hover:bg-black/5 rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+                        >
                             <X className="w-6 h-6 text-brandCharcoal" />
                         </button>
                     </div>
