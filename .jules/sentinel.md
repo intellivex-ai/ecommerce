@@ -1,0 +1,4 @@
+## 2024-05-24 - Missing Client-Side Admin Authorization
+**Vulnerability:** The `/admin` route lacked component-level authorization checks, relying solely on router-level rendering and exposing admin components to unauthenticated or non-admin users if accessed directly.
+**Learning:** Relying solely on `App.jsx` layout logic for hiding admin links or components does not prevent direct URL access. Component-level guards using `useAuth` and `Navigate` are strictly necessary for sensitive routes.
+**Prevention:** Always implement explicit component-level route guards checking `user.email` (or a formal role) and handle auth loading states carefully after all hook and function declarations to satisfy React constraints.
