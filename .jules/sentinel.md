@@ -1,0 +1,4 @@
+## 2024-07-07 - Missing Authorization on Admin Route
+**Vulnerability:** The client-side `/admin` route was unprotected and accessible to any visitor because it lacked component-level route guards.
+**Learning:** Relying on router-level setup without proper `<Navigate>` and `useAuth` within sensitive components leads to unauthenticated access to administrative interfaces.
+**Prevention:** Always implement explicit component-level route guards checking user authentication and authorization (e.g., `user?.email === 'admin@velocity.io'`) for sensitive routes, placed carefully after all hook declarations to avoid Rules of Hooks violations.
