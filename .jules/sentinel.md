@@ -1,0 +1,4 @@
+## 2024-05-24 - [Missing Admin Authorization]
+**Vulnerability:** The client-side admin route (`/admin`) was fully accessible without any authentication or authorization checks.
+**Learning:** Relying solely on obscuring the URL or missing server-side checks leaves admin functionality exposed to unauthorized access if a user guesses or discovers the route. Client-side route guards using component-level authentication checks (like `useAuth` and `<Navigate>`) are essential for protecting sensitive views in React applications.
+**Prevention:** Always implement component-level route guards for administrative or sensitive pages. Future enhancements should consider formal RBAC (Role-Based Access Control) instead of hardcoding specific admin emails.
