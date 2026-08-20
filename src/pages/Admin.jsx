@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   adminService } from '../services/adminService';
 import { useProducts } from '../hooks/useProducts';
+import { useAuth } from '../hooks/useAuth';
+import { Navigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Package, 
@@ -123,6 +125,14 @@ const AdminPanel = () => {
       { id: 'inventory', label: 'Inventory', icon: Package },
       { id: 'users', label: 'Pilots', icon: Users },
     ];
+
+        const { user, loading: authLoading } = useAuth();
+
+        if (authLoading) return null;
+        if (!user || user.email !== 'admin@velocity.io') {
+            // Sentinel Security Update: Restrict access to admin panel to authorized administrators only.
+            return <Navigate to="/" replace />;
+        }
 
     return (
         <div className="flex bg-brandOffWhite min-h-screen relative overflow-hidden">
