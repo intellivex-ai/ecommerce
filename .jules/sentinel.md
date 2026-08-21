@@ -1,0 +1,4 @@
+## 2025-02-27 - Missing Admin Route Guard
+**Vulnerability:** Client-side administrative routes like `/admin` were entirely unprotected and missing route guards, allowing unauthorized access.
+**Learning:** This application implements client-side security via component-level route guards using the `useAuth` hook and `react-router-dom`'s `<Navigate>`, rather than centralized router-level protection in `App.jsx`. Additionally, admin authorization is currently verified by explicitly checking if `user?.email === 'admin@velocity.io'`.
+**Prevention:** Always implement component-level route guards using `useAuth` and `<Navigate>` on sensitive pages. For React hooks, remember to place early returns for access control strictly after all React hook and block-scoped function declarations to avoid violating the Rules of Hooks or encountering the Temporal Dead Zone.
