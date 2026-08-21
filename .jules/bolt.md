@@ -1,0 +1,3 @@
+## 2024-10-24 - Memoizing GSAP-dependent Arrays
+**Learning:** Passing unmemoized derived arrays to components with `useEffect` dependency arrays that trigger GSAP layout animations (like `ProductGrid`) causes unnecessary O(N log N) recalculations and layout re-animations whenever a parent component re-renders from unrelated state changes (like opening a filter menu).
+**Action:** Always memoize derived collections passed to animation-heavy components using `useMemo` to prevent unnecessary recalculations and UI stutter.
