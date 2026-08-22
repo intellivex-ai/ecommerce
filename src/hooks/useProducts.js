@@ -27,7 +27,10 @@ export const useProducts = (filters = {}) => {
     }, [JSON.stringify(filters)]);
 
     useEffect(() => {
-        fetchAll();
+        const initData = async () => {
+            await fetchAll();
+        };
+        initData();
 
         // Setup Realtime Subscription for products
         const channel = supabase
