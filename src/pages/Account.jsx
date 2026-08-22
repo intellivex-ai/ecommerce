@@ -53,12 +53,6 @@ const Account = () => {
     if (ref.current) pageEnter(ref.current);
   }, []);
 
-  useEffect(() => {
-    if (isAuthenticated && user?.id) {
-      fetchOrders();
-    }
-  }, [isAuthenticated, user]);
-
   const fetchOrders = async () => {
     setOrdersLoading(true);
     try {
@@ -70,6 +64,15 @@ const Account = () => {
       setOrdersLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isAuthenticated && user?.id) {
+      const initData = async () => {
+        await fetchOrders();
+      };
+      initData();
+    }
+  }, [isAuthenticated, user]);
 
   if (authLoading) return (
     <div className="min-h-screen bg-brandOffWhite flex items-center justify-center">

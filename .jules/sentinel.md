@@ -1,0 +1,4 @@
+## 2024-08-22 - Missing Admin Auth Guard
+**Vulnerability:** The Admin panel lacked authentication and authorization checks, allowing any unauthenticated user to access the dashboard and perform admin actions.
+**Learning:** React Router routes must be protected at the component level when using client-side routing. Without `useAuth` checks inside the sensitive components, the UI and API actions can be exposed.
+**Prevention:** Always implement route guards with early returns and role checks (e.g., `user?.email === 'admin@velocity.io'`) within admin-level components before rendering the sensitive UI.
