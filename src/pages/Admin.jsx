@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Navigate } from 'react-router-dom';
 import { 
   adminService } from '../services/adminService';
 import { useProducts } from '../hooks/useProducts';
+import { useAuth } from '../hooks/useAuth';
 import { 
   LayoutDashboard, 
   Package, 
@@ -52,6 +54,7 @@ const AdminPanel = () => {
         totalOrders: 0,
         totalUsers: 8492 // Mocked for now
     });
+    const { user, loading: authLoading } = useAuth();
 
     useEffect(() => {
         fetchOrders();
@@ -123,6 +126,12 @@ const AdminPanel = () => {
       { id: 'inventory', label: 'Inventory', icon: Package },
       { id: 'users', label: 'Pilots', icon: Users },
     ];
+
+    if (authLoading) return null;
+    if (user?.email !== 'admin@velocity.io') {
+        // Sentinel Security Update: Restrict access to admin endpoint
+        return <Navigate to="/" replace />;
+    }
 
     return (
         <div className="flex bg-brandOffWhite min-h-screen relative overflow-hidden">
