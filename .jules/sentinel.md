@@ -1,0 +1,4 @@
+## 2023-10-27 - Admin Route Guard Protection
+**Vulnerability:** The client-side admin route (`/admin`) lacked authentication and authorization guards, exposing the AdminPanel component to all visitors.
+**Learning:** In this project architecture, component-level route guards must be implemented using the `useAuth` hook and `<Navigate>` to enforce access control based on user email or profile, rather than relying on router-level protection in App.jsx.
+**Prevention:** Always implement role-based access checks at the component level for sensitive routes, ensuring early returns are placed correctly after all React hook and block-scoped declarations to avoid Temporal Dead Zone errors.
