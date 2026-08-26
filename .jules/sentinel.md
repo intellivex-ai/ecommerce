@@ -1,0 +1,4 @@
+## 2024-05-24 - Missing Client-Side Authorization on Admin Routes
+**Vulnerability:** The `/admin` client-side route lacked proper authentication and authorization checks, allowing unauthenticated or unauthorized users to view the admin dashboard layout.
+**Learning:** Hardcoding specific emails for role-based access control is a recognized code smell, but it is crucial to use immutable or verified fields (like `user.email`) rather than user-controlled fields (like `profile.full_name`) to prevent privilege escalation vulnerabilities. Route guards must also be placed correctly after all React hooks to avoid Temporal Dead Zone and Rules of Hooks violations.
+**Prevention:** Future enhancements should prefer checking formal user roles or utilizing environment variables for administrative privileges. Always ensure route guards are implemented on sensitive client-side routes.
