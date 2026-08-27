@@ -108,7 +108,8 @@ const Account = () => {
                <h2 className="text-xl font-display font-black text-brandCharcoal tracking-tight mb-1">{profile?.full_name || 'Pilot Unknown'}</h2>
                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6">{user?.email}</p>
                
-               {profile?.full_name === 'Admin' && (
+               {/* Sentinel Security Update: Restrict access based on user email, not user-controlled full_name */}
+               {user?.email === 'admin@velocity.io' && (
                 <Link to="/admin" className="inline-flex items-center gap-2 bg-brandCharcoal text-white text-[9px] font-black px-5 py-2.5 rounded-xl uppercase tracking-widest hover:bg-brand transition-all shadow-lg shadow-brandCharcoal/20">
                    System Access
                 </Link>
