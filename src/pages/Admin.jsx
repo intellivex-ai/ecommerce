@@ -24,6 +24,8 @@ import {
 } from 'lucide-react';
 import { pageEnter, staggerItems } from '../animations/gsapAnimations';
 import { twMerge } from 'tailwind-merge';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 const STATUS_COLORS = {
   pending: 'bg-amber-100 text-amber-700 border-amber-200',
@@ -40,6 +42,7 @@ const AdminPanel = () => {
     const [orders, setOrders] = useState([]);
     const [ordersLoading, setOrdersLoading] = useState(true);
     const mainRef = useRef(null);
+    const { user, isAuthenticated, loading: authLoading } = useAuth();
 
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -52,11 +55,6 @@ const AdminPanel = () => {
         totalOrders: 0,
         totalUsers: 8492 // Mocked for now
     });
-
-    useEffect(() => {
-        fetchOrders();
-        if (mainRef.current) pageEnter(mainRef.current);
-    }, []);
 
     const fetchOrders = async () => {
         setOrdersLoading(true);
@@ -72,6 +70,16 @@ const AdminPanel = () => {
             setOrdersLoading(false);
         }
     };
+
+    useEffect(() => {
+        const initData = async () => {
+            if (isAuthenticated && user?.email === 'admin@velocity.io') {
+                await fetchOrders();
+            }
+        };
+        initData();
+        if (mainRef.current) pageEnter(mainRef.current);
+    }, [isAuthenticated, user]);
 
     const handleUpdateOrderStatus = async (orderId, newStatus) => {
         try {
@@ -123,6 +131,12 @@ const AdminPanel = () => {
       { id: 'inventory', label: 'Inventory', icon: Package },
       { id: 'users', label: 'Pilots', icon: Users },
     ];
+
+    // Sentinel Security Update: Restrict access to admin route explicitly placing returns after hook and variable declarations
+    if (authLoading) return null;
+    if (!isAuthenticated || user?.email !== 'admin@velocity.io') {
+        return <Navigate to="/" replace />;
+    }
 
     return (
         <div className="flex bg-brandOffWhite min-h-screen relative overflow-hidden">
