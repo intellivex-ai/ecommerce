@@ -1,0 +1,4 @@
+## 2024-10-25 - Unprotected Admin Route and Hardcoded RBAC
+**Vulnerability:** The client-side admin route (`/admin`) was completely unprotected, allowing any user to view it.
+**Learning:** The application architecture currently relies on hardcoding specific emails (`admin@velocity.io`) for role-based access control rather than utilizing formal user roles or claims. Additionally, route guards were omitted, exposing the admin panel layout.
+**Prevention:** Always implement `useAuth` based route guards on sensitive views. Future iterations should migrate away from hardcoded emails toward formal role checks or environment variables to prevent privilege escalation or reliance on insecure identifiers like `full_name`.
