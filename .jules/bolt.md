@@ -1,0 +1,3 @@
+## 2024-10-24 - GSAP Animation Triggered by React Array References
+**Learning:** Passing unmemoized derived arrays to components with `useEffect` dependency arrays that trigger GSAP layout animations (e.g., `ProductGrid`) causes unnecessary O(N log N) recalculations and layout re-animations when unrelated state (like `showMobileFilters`) changes.
+**Action:** Always memoize derived collections passed to animation-heavy components using `useMemo` to preserve referential equality and prevent unintended animation retriggers.
