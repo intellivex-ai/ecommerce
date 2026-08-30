@@ -1,0 +1,3 @@
+## 2024-08-30 - Keyboard Accessibility for Hover-Revealed UI
+**Learning:** Hover-revealed actions (like Quick Add and Wishlist) in Product Cards are inaccessible to keyboard users because they rely solely on `group-hover` for visibility. When a user tabs to the hidden buttons, the buttons gain focus but remain visually hidden, breaking keyboard navigation.
+**Action:** Always combine `group-hover:opacity-100` with `focus-within:opacity-100` (or `focus-visible:opacity-100` directly on the button) on hover containers to ensure hidden interactive elements become visible when receiving keyboard focus.
