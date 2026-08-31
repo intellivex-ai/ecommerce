@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   adminService } from '../services/adminService';
 import { useProducts } from '../hooks/useProducts';
+import { useAuth } from '../hooks/useAuth';
+import { Navigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Package, 
@@ -35,6 +37,7 @@ const STATUS_COLORS = {
 };
 
 const AdminPanel = () => {
+    const { user, loading: authLoading } = useAuth();
     const [activeTab, setActiveTab] = useState('dashboard');
     const { products, loading: productsLoading, refresh: refreshProducts } = useProducts();
     const [orders, setOrders] = useState([]);
@@ -53,11 +56,6 @@ const AdminPanel = () => {
         totalUsers: 8492 // Mocked for now
     });
 
-    useEffect(() => {
-        fetchOrders();
-        if (mainRef.current) pageEnter(mainRef.current);
-    }, []);
-
     const fetchOrders = async () => {
         setOrdersLoading(true);
         try {
@@ -72,6 +70,15 @@ const AdminPanel = () => {
             setOrdersLoading(false);
         }
     };
+
+    useEffect(() => {
+        // 🛡️ Sentinel Security Note: Only fetch sensitive order data and animate if authenticated as admin
+        if (!authLoading && user?.email === 'admin@velocity.io') {
+            const initData = async () => { await fetchOrders(); };
+            initData();
+            if (mainRef.current) pageEnter(mainRef.current);
+        }
+    }, [authLoading, user]);
 
     const handleUpdateOrderStatus = async (orderId, newStatus) => {
         try {
@@ -123,6 +130,16 @@ const AdminPanel = () => {
       { id: 'inventory', label: 'Inventory', icon: Package },
       { id: 'users', label: 'Pilots', icon: Users },
     ];
+
+    // 🛡️ Sentinel Security Note: Route Guard to enforce administrative access.
+    // Early returns are placed after all hook and block-scoped declarations to prevent Temporal Dead Zone ReferenceErrors.
+    if (authLoading) {
+        return null;
+    }
+
+    if (!user || user.email !== 'admin@velocity.io') {
+        return <Navigate to="/" replace />;
+    }
 
     return (
         <div className="flex bg-brandOffWhite min-h-screen relative overflow-hidden">

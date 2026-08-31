@@ -1,0 +1,4 @@
+## 2024-05-24 - Admin Route Authorization & Privilege Escalation Fix
+**Vulnerability:** The Admin panel lacked a client-side route guard, leaving sensitive administrative routes exposed. Additionally, the navigation link to the admin panel used a user-controlled field (`profile?.full_name === 'Admin'`), introducing a privilege escalation vulnerability.
+**Learning:** React route guards using early returns can inadvertently cause `ReferenceError` crashes or GSAP animation breakages if placed improperly before hook-referenced block-scoped declarations, causing Temporal Dead Zone issues, or if the `useEffect` doesn't properly account for the loading state.
+**Prevention:** Always implement robust route guards checking immutable identities (e.g., formal roles or environment variables, not user-provided display names). Ensure early returns are placed strictly *after* all React hooks and their referenced function declarations.
