@@ -1,0 +1,3 @@
+## 2024-09-01 - Accessible Hover Actions
+**Learning:** Hover-revealed interactive UI elements (like Quick Add or Wishlist buttons on Product Cards) that rely on Tailwind's `group-hover:opacity-100` are inaccessible to keyboard users unless explicitly paired with `focus-within:opacity-100` (or `focus-visible:opacity-100` directly on the button) on the hover container to ensure they become visible when receiving focus.
+**Action:** Always pair `group-hover:opacity-100` with `focus-within:opacity-100` on containers of interactive elements, and `focus-visible:opacity-100` on individual hover-revealed buttons to maintain keyboard accessibility. Add appropriate `aria-label`s to icon-only buttons.
