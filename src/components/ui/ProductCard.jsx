@@ -46,13 +46,14 @@ const ProductCard = ({ product, className = '' }) => {
     >
       {/* Wishlist Button */}
       <button
+        aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
         onClick={(e) => { 
             e.preventDefault(); 
             e.stopPropagation(); 
             toggleWishlist(product); 
             toastFeedback(isWishlisted ? 'Removed from vault' : 'Added to vault');
         }}
-        className={`absolute top-6 right-6 z-10 p-2.5 rounded-full glass transition-all duration-300 transform scale-90 group-hover:scale-100 opacity-0 group-hover:opacity-100 ${
+        className={`absolute top-6 right-6 z-10 p-2.5 rounded-full glass transition-all duration-300 transform scale-90 group-hover:scale-100 focus-visible:scale-100 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 ${
           isWishlisted ? 'bg-red-50 text-red-500 opacity-100 scale-100' : 'text-brandCharcoal hover:bg-white'
         }`}
       >
@@ -81,7 +82,7 @@ const ProductCard = ({ product, className = '' }) => {
         </Link>
 
         {/* Action Overlay */}
-        <div className="absolute bottom-4 inset-x-4 flex gap-2 translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out">
+        <div className="absolute bottom-4 inset-x-4 flex gap-2 translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100 transition-all duration-500 ease-out">
           <button
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowQuickView(true); }}
             className="flex-1 bg-white text-brandCharcoal py-3 rounded-xl text-[10px] font-bold uppercase tracking-wider shadow-lg hover:bg-brandCharcoal hover:text-white transition-all flex items-center justify-center gap-2"
@@ -90,6 +91,7 @@ const ProductCard = ({ product, className = '' }) => {
             View
           </button>
           <button
+            aria-label="Quick add to cart"
             onClick={handleQuickAdd}
             className="flex-none bg-brandCharcoal text-white p-3 rounded-xl shadow-lg hover:bg-brand transition-all group/btn"
           >
