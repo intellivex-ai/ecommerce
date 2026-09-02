@@ -1,0 +1,4 @@
+## 2024-05-24 - Privilege Escalation via User-Controlled Field
+**Vulnerability:** The application used `profile?.full_name === 'Admin'` to determine if a user should have access to administrative routes/links. Since users can edit their profile information, anyone could change their name to 'Admin' and escalate their privileges.
+**Learning:** Never use mutable, user-controlled data fields for authorization or route guarding. Access control must rely on securely managed roles or immutable identifiers (like a verified email or a server-side role).
+**Prevention:** Ensure all role checks and route guards validate against trusted, server-side data such as `user.email` (or a dedicated `role` table) rather than user-editable profile properties.
