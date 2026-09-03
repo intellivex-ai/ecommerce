@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   adminService } from '../services/adminService';
 import { useProducts } from '../hooks/useProducts';
+import { useAuth } from '../hooks/useAuth';
+import { Navigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Package, 
@@ -22,7 +24,7 @@ import {
   Image as ImageIcon,
   BarChart3
 } from 'lucide-react';
-import { pageEnter, staggerItems } from '../animations/gsapAnimations';
+import { pageEnter } from '../animations/gsapAnimations';
 import { twMerge } from 'tailwind-merge';
 
 const STATUS_COLORS = {
@@ -35,6 +37,7 @@ const STATUS_COLORS = {
 };
 
 const AdminPanel = () => {
+    const { user, loading: authLoading } = useAuth();
     const [activeTab, setActiveTab] = useState('dashboard');
     const { products, loading: productsLoading, refresh: refreshProducts } = useProducts();
     const [orders, setOrders] = useState([]);
@@ -54,9 +57,11 @@ const AdminPanel = () => {
     });
 
     useEffect(() => {
-        fetchOrders();
-        if (mainRef.current) pageEnter(mainRef.current);
-    }, []);
+        if (!authLoading && user?.email === 'admin@velocity.io') {
+            fetchOrders();
+            if (mainRef.current) pageEnter(mainRef.current);
+        }
+    }, [authLoading, user]);
 
     const fetchOrders = async () => {
         setOrdersLoading(true);
@@ -123,6 +128,9 @@ const AdminPanel = () => {
       { id: 'inventory', label: 'Inventory', icon: Package },
       { id: 'users', label: 'Pilots', icon: Users },
     ];
+
+    if (authLoading) return null;
+    if (!user || user.email !== 'admin@velocity.io') return <Navigate to="/" replace />;
 
     return (
         <div className="flex bg-brandOffWhite min-h-screen relative overflow-hidden">

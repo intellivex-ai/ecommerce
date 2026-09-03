@@ -1,0 +1,4 @@
+## 2024-05-24 - Client-Side Route Guard for Admin Panel
+**Vulnerability:** The admin panel component lacked a route guard, potentially allowing unauthorized users to access or view the administrative UI structure even if API requests failed.
+**Learning:** Administrative routes require explicit component-level route guards implemented using the `useAuth` hook and `<Navigate>` to enforce access control based on user email (e.g., admin@velocity.io). Early returns must be placed strictly after all React hook and function declarations to satisfy the Rules of Hooks and prevent Temporal Dead Zone ReferenceErrors.
+**Prevention:** Always implement strong route guards for privileged components. When adding early returns in React components for auth/loading states, ensure they follow all hook/function declarations. Avoid using user-controlled fields like `full_name` for authorization to prevent privilege escalation.
