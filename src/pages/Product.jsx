@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { 
   Heart, 
@@ -61,7 +61,11 @@ const Product = () => {
   const [reviews, setReviews] = useState([]);
   const [stockLevel, setStockLevel] = useState(0);
 
-  const related = products.filter(p => String(p.id) !== String(id)).slice(0, 4);
+  // Memoize related products to prevent unnecessary recalculations
+  // and avoid re-triggering GSAP layout animations in ProductGrid.
+  const related = useMemo(() => {
+    return products.filter(p => String(p.id) !== String(id)).slice(0, 4);
+  }, [products, id]);
 
   const [selectedImg, setSelectedImg] = useState(0);
   const [selectedColor, setSelectedColor] = useState(null);
