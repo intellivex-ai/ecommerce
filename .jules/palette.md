@@ -1,0 +1,3 @@
+## 2023-10-25 - Fix keyboard accessibility for hover-revealed UI
+**Learning:** Hover-revealed interactive UI elements (like Quick Add or Wishlist buttons on Product Cards) that rely on Tailwind's `group-hover:opacity-100` are inaccessible to keyboard users unless explicitly paired with `focus-within:opacity-100` (or `focus-visible:opacity-100` directly on the button) on the hover container to ensure they become visible when receiving focus.
+**Action:** Always ensure that any element hidden with `opacity-0` and revealed on hover (`group-hover:opacity-100`) also includes a focus-based reveal strategy like `group-focus-within:opacity-100` or `focus-visible:opacity-100`.
