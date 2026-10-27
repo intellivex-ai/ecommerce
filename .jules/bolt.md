@@ -1,0 +1,3 @@
+## 2024-10-24 - GSAP Animation Performance Bottleneck
+**Learning:** Passing unmemoized derived arrays to components with useEffect dependency arrays that trigger GSAP layout animations (e.g., ProductGrid) causes unnecessary O(N log N) recalculations and layout re-animations when unrelated state (like selectedColors or mobile filter toggles) changes.
+**Action:** Always memoize derived collections passed to animation-heavy components using useMemo to preserve reference equality.
