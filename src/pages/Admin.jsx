@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   adminService } from '../services/adminService';
 import { useProducts } from '../hooks/useProducts';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import { 
   LayoutDashboard, 
   Package, 
@@ -22,7 +24,7 @@ import {
   Image as ImageIcon,
   BarChart3
 } from 'lucide-react';
-import { pageEnter, staggerItems } from '../animations/gsapAnimations';
+import { pageEnter } from '../animations/gsapAnimations';
 import { twMerge } from 'tailwind-merge';
 
 const STATUS_COLORS = {
@@ -35,6 +37,7 @@ const STATUS_COLORS = {
 };
 
 const AdminPanel = () => {
+    const { user, loading: authLoading, isAuthenticated } = useAuth();
     const [activeTab, setActiveTab] = useState('dashboard');
     const { products, loading: productsLoading, refresh: refreshProducts } = useProducts();
     const [orders, setOrders] = useState([]);
@@ -53,11 +56,6 @@ const AdminPanel = () => {
         totalUsers: 8492 // Mocked for now
     });
 
-    useEffect(() => {
-        fetchOrders();
-        if (mainRef.current) pageEnter(mainRef.current);
-    }, []);
-
     const fetchOrders = async () => {
         setOrdersLoading(true);
         try {
@@ -72,6 +70,14 @@ const AdminPanel = () => {
             setOrdersLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (!authLoading && isAuthenticated && user?.email === 'admin@velocity.io') {
+            const initData = async () => { await fetchOrders(); };
+            initData();
+            if (mainRef.current) pageEnter(mainRef.current);
+        }
+    }, [authLoading, isAuthenticated, user]);
 
     const handleUpdateOrderStatus = async (orderId, newStatus) => {
         try {
@@ -123,6 +129,15 @@ const AdminPanel = () => {
       { id: 'inventory', label: 'Inventory', icon: Package },
       { id: 'users', label: 'Pilots', icon: Users },
     ];
+
+    if (authLoading) {
+        return <div>Loading...</div>;
+    }
+
+    // 🛡️ Sentinel: Enforce strict component-level route guarding to prevent direct URL access by unauthorized users
+    if (!isAuthenticated || user?.email !== 'admin@velocity.io') {
+        return <Navigate to="/" replace />;
+    }
 
     return (
         <div className="flex bg-brandOffWhite min-h-screen relative overflow-hidden">
