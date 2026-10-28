@@ -1,0 +1,4 @@
+## 2024-05-18 - Admin Route & Privilege Escalation Fix
+**Vulnerability:** The `/admin` route lacked client-side authorization guards, allowing unauthenticated access. Additionally, the admin panel link in `Account.jsx` relied on `profile.full_name === 'Admin'`, introducing a privilege escalation risk since `full_name` is user-controlled.
+**Learning:** Always use authoritative backend data or non-user-controlled fields (like role enums or specific emails like `admin@velocity.io` as a stopgap) for access control instead of user-modifiable profile fields.
+**Prevention:** Implement component-level route guards via `useAuth` on all sensitive routes, and review all conditional rendering of administrative features to ensure they rely on secure tokens or unmodifiable identity claims.
