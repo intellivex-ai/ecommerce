@@ -53,12 +53,6 @@ const Account = () => {
     if (ref.current) pageEnter(ref.current);
   }, []);
 
-  useEffect(() => {
-    if (isAuthenticated && user?.id) {
-      fetchOrders();
-    }
-  }, [isAuthenticated, user]);
-
   const fetchOrders = async () => {
     setOrdersLoading(true);
     try {
@@ -70,6 +64,15 @@ const Account = () => {
       setOrdersLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isAuthenticated && user?.id) {
+      const initData = async () => {
+        await fetchOrders();
+      };
+      initData();
+    }
+  }, [isAuthenticated, user]);
 
   if (authLoading) return (
     <div className="min-h-screen bg-brandOffWhite flex items-center justify-center">
@@ -108,7 +111,8 @@ const Account = () => {
                <h2 className="text-xl font-display font-black text-brandCharcoal tracking-tight mb-1">{profile?.full_name || 'Pilot Unknown'}</h2>
                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6">{user?.email}</p>
                
-               {profile?.full_name === 'Admin' && (
+               {/* 🛡️ Sentinel: Use email instead of user-controlled full_name for admin authorization */}
+               {user?.email === 'admin@velocity.io' && (
                 <Link to="/admin" className="inline-flex items-center gap-2 bg-brandCharcoal text-white text-[9px] font-black px-5 py-2.5 rounded-xl uppercase tracking-widest hover:bg-brand transition-all shadow-lg shadow-brandCharcoal/20">
                    System Access
                 </Link>
