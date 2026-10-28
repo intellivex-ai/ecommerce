@@ -1,0 +1,3 @@
+## 2024-10-28 - Hover-Revealed UI Keyboard Inaccessibility
+**Learning:** Interactive UI elements (like Quick Add or Wishlist buttons) that rely solely on `group-hover:opacity-100` are inaccessible to keyboard users because they remain invisible when tabbed to.
+**Action:** Always pair `group-hover` utility classes with `focus-within:opacity-100` on the hover container and `focus-visible:opacity-100` on the individual buttons to ensure they become visible when receiving focus.
