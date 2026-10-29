@@ -1,0 +1,4 @@
+## 2024-05-24 - Missing Route Guard on Admin Panel
+**Vulnerability:** The `/admin` route in `Admin.jsx` lacked client-side authentication checks, exposing the entire admin panel UI and potentially sensitive data to unauthenticated users.
+**Learning:** React Router configurations may rely on component-level route guarding rather than centralized layout wrappers. When creating administrative views, route guards using `useAuth` and `<Navigate>` must be explicitly included inside the component, placed correctly after all hook and function declarations to prevent Temporal Dead Zone ReferenceError crashes during `useEffect` execution.
+**Prevention:** Establish a reusable higher-order component (HOC) like `<AdminRoute>` for standardizing role-based access checks, or ensure component-level guards are systematically reviewed during PRs.
