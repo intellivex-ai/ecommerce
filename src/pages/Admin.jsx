@@ -22,8 +22,10 @@ import {
   Image as ImageIcon,
   BarChart3
 } from 'lucide-react';
-import { pageEnter, staggerItems } from '../animations/gsapAnimations';
+import { pageEnter } from '../animations/gsapAnimations';
 import { twMerge } from 'tailwind-merge';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 const STATUS_COLORS = {
   pending: 'bg-amber-100 text-amber-700 border-amber-200',
@@ -35,6 +37,7 @@ const STATUS_COLORS = {
 };
 
 const AdminPanel = () => {
+    const { user, isAuthenticated, loading: authLoading } = useAuth();
     const [activeTab, setActiveTab] = useState('dashboard');
     const { products, loading: productsLoading, refresh: refreshProducts } = useProducts();
     const [orders, setOrders] = useState([]);
@@ -53,12 +56,7 @@ const AdminPanel = () => {
         totalUsers: 8492 // Mocked for now
     });
 
-    useEffect(() => {
-        fetchOrders();
-        if (mainRef.current) pageEnter(mainRef.current);
-    }, []);
-
-    const fetchOrders = async () => {
+    const fetchOrders = React.useCallback(async () => {
         setOrdersLoading(true);
         try {
             const data = await adminService.fetchAllOrders();
@@ -71,7 +69,17 @@ const AdminPanel = () => {
         } finally {
             setOrdersLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        const initData = async () => {
+            if (!authLoading && isAuthenticated && user?.email === 'admin@velocity.io') {
+                await fetchOrders();
+                if (mainRef.current) pageEnter(mainRef.current);
+            }
+        };
+        initData();
+    }, [authLoading, isAuthenticated, user, fetchOrders]);
 
     const handleUpdateOrderStatus = async (orderId, newStatus) => {
         try {
@@ -123,6 +131,12 @@ const AdminPanel = () => {
       { id: 'inventory', label: 'Inventory', icon: Package },
       { id: 'users', label: 'Pilots', icon: Users },
     ];
+
+    // 🛡️ Sentinel: Enforce administrative route protection
+    if (authLoading) return null;
+    if (!isAuthenticated || user?.email !== 'admin@velocity.io') {
+        return <Navigate to="/" replace />;
+    }
 
     return (
         <div className="flex bg-brandOffWhite min-h-screen relative overflow-hidden">
