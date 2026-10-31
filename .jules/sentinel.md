@@ -1,0 +1,4 @@
+## 2024-05-30 - Missing Auth Route Guard on Admin Panel
+**Vulnerability:** The client-side `/admin` route lacked authorization checks, leaving the dashboard completely accessible to any unauthenticated or unauthorized user.
+**Learning:** React Router configurations don't automatically protect routes unless explicitly implemented. Furthermore, inserting route guard early returns in React requires careful placement (after block-scoped function declarations but before the return statement) to avoid Temporal Dead Zone ReferenceError crashes on initial render.
+**Prevention:** Always implement component-level route guards using the application's auth hooks (`useAuth`) and navigation components (`<Navigate>`), and ensure early returns are correctly placed to comply with React's Rules of Hooks.
