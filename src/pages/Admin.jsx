@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   adminService } from '../services/adminService';
 import { useProducts } from '../hooks/useProducts';
+import { useAuth } from '../hooks/useAuth';
+import { Navigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Package, 
@@ -40,6 +42,7 @@ const AdminPanel = () => {
     const [orders, setOrders] = useState([]);
     const [ordersLoading, setOrdersLoading] = useState(true);
     const mainRef = useRef(null);
+    const { user, loading: authLoading } = useAuth();
 
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -52,11 +55,6 @@ const AdminPanel = () => {
         totalOrders: 0,
         totalUsers: 8492 // Mocked for now
     });
-
-    useEffect(() => {
-        fetchOrders();
-        if (mainRef.current) pageEnter(mainRef.current);
-    }, []);
 
     const fetchOrders = async () => {
         setOrdersLoading(true);
@@ -72,6 +70,16 @@ const AdminPanel = () => {
             setOrdersLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (!authLoading && user?.email === 'admin@velocity.io') {
+            const initData = async () => {
+                await fetchOrders();
+            };
+            initData();
+            if (mainRef.current) pageEnter(mainRef.current);
+        }
+    }, [authLoading, user]);
 
     const handleUpdateOrderStatus = async (orderId, newStatus) => {
         try {
@@ -123,6 +131,11 @@ const AdminPanel = () => {
       { id: 'inventory', label: 'Inventory', icon: Package },
       { id: 'users', label: 'Pilots', icon: Users },
     ];
+
+    if (authLoading) return null;
+
+    // 🛡️ Sentinel: Enforce admin access control to prevent unauthorized access
+    if (user?.email !== 'admin@velocity.io') return <Navigate to="/" replace />;
 
     return (
         <div className="flex bg-brandOffWhite min-h-screen relative overflow-hidden">
