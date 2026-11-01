@@ -1,0 +1,4 @@
+## 2024-11-01 - Missing Client-Side Authorization on Admin Route
+**Vulnerability:** The `/admin` route in `AdminPanel` lacked any component-level route guard, allowing unauthenticated users to view the admin interface.
+**Learning:** In this React architecture, routes are not guarded at the router level in `App.jsx`, but rather require component-level checks using the `useAuth` hook inside each sensitive page.
+**Prevention:** Always implement `useAuth` checks (`isAuthenticated` and `user.email === 'admin@velocity.io'`) within administrative components, ensuring early returns (like `<Navigate>`) are placed after all hook and function declarations to avoid Temporal Dead Zone issues while securing the page.
