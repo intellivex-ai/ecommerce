@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import { 
   adminService } from '../services/adminService';
 import { useProducts } from '../hooks/useProducts';
@@ -40,6 +42,7 @@ const AdminPanel = () => {
     const [orders, setOrders] = useState([]);
     const [ordersLoading, setOrdersLoading] = useState(true);
     const mainRef = useRef(null);
+    const { user, isAuthenticated, loading: authLoading } = useAuth();
 
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -54,9 +57,11 @@ const AdminPanel = () => {
     });
 
     useEffect(() => {
-        fetchOrders();
-        if (mainRef.current) pageEnter(mainRef.current);
-    }, []);
+        if (!authLoading && isAuthenticated && user?.email === 'admin@velocity.io') {
+            fetchOrders();
+            if (mainRef.current) pageEnter(mainRef.current);
+        }
+    }, [authLoading, isAuthenticated, user]);
 
     const fetchOrders = async () => {
         setOrdersLoading(true);
@@ -115,6 +120,15 @@ const AdminPanel = () => {
             setIsSubmitting(false);
         }
     };
+
+    // 🛡️ Sentinel: Enforce route guard for admin panel to prevent unauthorized access
+    if (authLoading) {
+        return <div>Loading...</div>;
+    }
+
+    if (!isAuthenticated || user?.email !== 'admin@velocity.io') {
+        return <Navigate to="/" replace />;
+    }
 
     const NAV_ITEMS = [
       { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
