@@ -1,0 +1,3 @@
+## 2024-11-03 - Memoizing GSAP-dependent Derived State
+**Learning:** In this architecture, derived arrays passed to components like `ProductGrid` trigger GSAP layout animations inside `useEffect` when the reference changes. Failing to memoize causes unintended O(N log N) recalculations and constant layout re-animations.
+**Action:** Always wrap derived collections passed to animation-heavy components with `useMemo` to preserve reference equality across renders.
