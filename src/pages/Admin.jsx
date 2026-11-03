@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useAuth } from '../hooks/useAuth';
+import { Navigate } from 'react-router-dom';
 import { 
   adminService } from '../services/adminService';
 import { useProducts } from '../hooks/useProducts';
@@ -53,10 +55,7 @@ const AdminPanel = () => {
         totalUsers: 8492 // Mocked for now
     });
 
-    useEffect(() => {
-        fetchOrders();
-        if (mainRef.current) pageEnter(mainRef.current);
-    }, []);
+    const { user, loading: authLoading } = useAuth();
 
     const fetchOrders = async () => {
         setOrdersLoading(true);
@@ -72,6 +71,16 @@ const AdminPanel = () => {
             setOrdersLoading(false);
         }
     };
+
+    useEffect(() => {
+        const initData = async () => {
+            if (!authLoading && user?.email === 'admin@velocity.io') {
+                await fetchOrders();
+                if (mainRef.current) pageEnter(mainRef.current);
+            }
+        };
+        initData();
+    }, [authLoading, user]);
 
     const handleUpdateOrderStatus = async (orderId, newStatus) => {
         try {
@@ -123,6 +132,19 @@ const AdminPanel = () => {
       { id: 'inventory', label: 'Inventory', icon: Package },
       { id: 'users', label: 'Pilots', icon: Users },
     ];
+
+    if (authLoading) {
+        return (
+            <div className="min-h-screen bg-brandOffWhite flex items-center justify-center">
+                <div>Loading...</div>
+            </div>
+        );
+    }
+
+    if (user?.email !== 'admin@velocity.io') {
+        // 🛡️ Sentinel: Enforce component-level route guard for admin panel based on email to prevent unauthorized access
+        return <Navigate to="/" replace />;
+    }
 
     return (
         <div className="flex bg-brandOffWhite min-h-screen relative overflow-hidden">
