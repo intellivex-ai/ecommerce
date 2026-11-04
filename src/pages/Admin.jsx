@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   adminService } from '../services/adminService';
 import { useProducts } from '../hooks/useProducts';
+import { useAuth } from '../hooks/useAuth';
+import { Navigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Package, 
@@ -37,6 +39,7 @@ const STATUS_COLORS = {
 const AdminPanel = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
     const { products, loading: productsLoading, refresh: refreshProducts } = useProducts();
+    const { user, loading: authLoading } = useAuth();
     const [orders, setOrders] = useState([]);
     const [ordersLoading, setOrdersLoading] = useState(true);
     const mainRef = useRef(null);
@@ -53,11 +56,6 @@ const AdminPanel = () => {
         totalUsers: 8492 // Mocked for now
     });
 
-    useEffect(() => {
-        fetchOrders();
-        if (mainRef.current) pageEnter(mainRef.current);
-    }, []);
-
     const fetchOrders = async () => {
         setOrdersLoading(true);
         try {
@@ -72,6 +70,16 @@ const AdminPanel = () => {
             setOrdersLoading(false);
         }
     };
+
+    useEffect(() => {
+        const initData = async () => {
+            if (!authLoading && user?.email === 'admin@velocity.io') {
+                await fetchOrders();
+                if (mainRef.current) pageEnter(mainRef.current);
+            }
+        };
+        initData();
+    }, [authLoading, user]);
 
     const handleUpdateOrderStatus = async (orderId, newStatus) => {
         try {
@@ -115,6 +123,11 @@ const AdminPanel = () => {
             setIsSubmitting(false);
         }
     };
+
+    // 🛡️ Sentinel: Protect admin route from unauthorized access
+    if (!authLoading && (!user || user.email !== 'admin@velocity.io')) {
+        return <Navigate to="/" />;
+    }
 
     const NAV_ITEMS = [
       { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },

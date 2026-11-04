@@ -1,0 +1,4 @@
+## 2024-03-24 - Privilege Escalation via User-Controlled Profile Data
+**Vulnerability:** The application used `profile?.full_name === 'Admin'` to control visibility of the admin dashboard link. The `/admin` route itself entirely lacked a frontend authentication guard, allowing unauthenticated access.
+**Learning:** Checking authorization based on user-controlled fields like `full_name` introduces critical privilege escalation vulnerabilities, as any user can update their name to bypass the check. Additionally, hiding UI elements without enforcing corresponding route guards is security by obscurity.
+**Prevention:** Always use immutable identifiers (like `user.email`, formal user roles, or server-side claims) for role-based access control. Every sensitive client-side route must implement a component-level route guard (e.g., using `useAuth` and `<Navigate>`) that validates these immutable traits.
