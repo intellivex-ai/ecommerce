@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import { 
   adminService } from '../services/adminService';
 import { useProducts } from '../hooks/useProducts';
@@ -53,10 +55,7 @@ const AdminPanel = () => {
         totalUsers: 8492 // Mocked for now
     });
 
-    useEffect(() => {
-        fetchOrders();
-        if (mainRef.current) pageEnter(mainRef.current);
-    }, []);
+    const { user, loading: authLoading } = useAuth();
 
     const fetchOrders = async () => {
         setOrdersLoading(true);
@@ -72,6 +71,19 @@ const AdminPanel = () => {
             setOrdersLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (!authLoading && user?.email === 'admin@velocity.io') {
+            fetchOrders();
+            if (mainRef.current) pageEnter(mainRef.current);
+        }
+    }, [authLoading, user]);
+
+    // 🛡️ Sentinel: Enforce admin access explicitly to prevent unauthorized access
+    if (authLoading) return null;
+    if (!authLoading && user?.email !== 'admin@velocity.io') {
+        return <Navigate to="/" replace />;
+    }
 
     const handleUpdateOrderStatus = async (orderId, newStatus) => {
         try {
