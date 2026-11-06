@@ -1,0 +1,4 @@
+## 2025-03-01 - Privilege Escalation via User-Controlled Field & Missing Route Guards
+**Vulnerability:** The application was using `profile?.full_name === 'Admin'` for role-based access to the admin system, a field easily modified by the user. Additionally, the `/admin` route entirely lacked component-level route guards, allowing direct unauthenticated access.
+**Learning:** Client-side components must independently enforce authentication and authorization (via `useAuth` and `<Navigate>`), as structural routing alone does not protect components. Never rely on user-mutable display fields for authorization.
+**Prevention:** Implement role-based access control based on immutable or verified server-side identifiers (e.g. `user.email === 'admin@velocity.io'` or explicit roles), and strictly enforce route guards at the component level for all protected views.

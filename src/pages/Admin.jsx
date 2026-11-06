@@ -22,6 +22,8 @@ import {
   Image as ImageIcon,
   BarChart3
 } from 'lucide-react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import { pageEnter, staggerItems } from '../animations/gsapAnimations';
 import { twMerge } from 'tailwind-merge';
 
@@ -35,6 +37,7 @@ const STATUS_COLORS = {
 };
 
 const AdminPanel = () => {
+    const { user, loading: authLoading } = useAuth();
     const [activeTab, setActiveTab] = useState('dashboard');
     const { products, loading: productsLoading, refresh: refreshProducts } = useProducts();
     const [orders, setOrders] = useState([]);
@@ -52,11 +55,6 @@ const AdminPanel = () => {
         totalOrders: 0,
         totalUsers: 8492 // Mocked for now
     });
-
-    useEffect(() => {
-        fetchOrders();
-        if (mainRef.current) pageEnter(mainRef.current);
-    }, []);
 
     const fetchOrders = async () => {
         setOrdersLoading(true);
@@ -115,6 +113,24 @@ const AdminPanel = () => {
             setIsSubmitting(false);
         }
     };
+
+    useEffect(() => {
+        if (!authLoading && user?.email === 'admin@velocity.io') {
+            fetchOrders();
+            if (mainRef.current) pageEnter(mainRef.current);
+        }
+    }, [authLoading, user]);
+
+    if (authLoading) return (
+      <div className="min-h-screen bg-brandOffWhite flex items-center justify-center">
+          <div className="w-12 h-12 border-4 border-brand/20 border-t-brand rounded-full animate-spin"></div>
+      </div>
+    );
+
+    if (!user || user.email !== 'admin@velocity.io') {
+        // 🛡️ Sentinel: Protect admin route from unauthorized access
+        return <Navigate to="/" replace />;
+    }
 
     const NAV_ITEMS = [
       { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
